@@ -1,0 +1,6 @@
+#+TITLE: Zyx
+#+AUTHOR: Zach Bedewi
+
+* Overview
+The goal of this project is to provide a centralized repository of
+all configurations used in my various computing environments.
