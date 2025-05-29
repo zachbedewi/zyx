@@ -5,6 +5,20 @@
 The goal of this project is to provide a centralized repository of
 all configurations used in my various computing environments.
 
+* General Principles
+To keep the code maintainable, extensible, and clean I am going to be generally
+following these rules:
+- Keep modules self contained, at least as self contained as possible.
+  Basically, I don't want to import a module that causes unintended
+  side effects for another module. By that same token, I don't want one
+  module to break because another hasn't been loaded in yet.
+- Only import downards and one level deep. I don't really like the idea of
+  importing modules two directories up in the directory structure. I know
+  that it is pretty simple to make a file to avoid having the "../.." in the
+  module path, but I'd really prefer to not use that. To me it feels like a code
+  smell and could be fixed through better configuration options; however, I'm
+  still a Nix noob so maybe this is me showing my inexperience.
+
 * Host Configurations
 - eye-of-god: Currently this is the configuration being used on my
   13 inch Framework laptop. This is the only host currently, but I
