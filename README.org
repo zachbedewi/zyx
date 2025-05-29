@@ -4,3 +4,23 @@
 * Overview
 The goal of this project is to provide a centralized repository of
 all configurations used in my various computing environments.
+
+* Host Configurations
+- eye-of-god: Currently this is the configuration being used on my
+  13 inch Framework laptop. This is the only host currently, but I
+  plan to eventually expand the configuration to cover my desktop
+  machine, work laptop (running macOS), and another personal laptop
+  (also running macOS). Once the workstations are finished being set
+  up, I will also add configurations for servers. I have a home server
+  now running QNAP's operating system, but I'd eventually like to
+  switch that over to NixOS as well. I also plan to get a VPS and install
+  NixOS on it using NixOS Anywhere. The Framework is essentially acting
+  as a test environment for implementing the initial version of this flake.
+
+* Project Roadmap
+- Get initial host configuration up and running
+- Set up module system for options used in different configurations
+- Add in secrets
+  - Decide between sops-nix and agenix
+- Add in impermanence
+- Add in disko with LUKS + BTRFS for workstations and ZFS for servers
