@@ -3,6 +3,7 @@
 
   outputs = inputs:
     inputs.flake-parts.lib.mkFlake {inherit inputs;} {
+      debug = true;
       systems = ["x86_64-linux"];
     };
 
@@ -11,7 +12,7 @@
 
     flake-parts = {
       url = "github:hercules-ci/flake-parts";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nixpkgs-lib.follows = "nixpkgs";
     };
   };
 }
