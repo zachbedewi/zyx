@@ -6,6 +6,7 @@
   inherit (lib.strings) fileContents;
 in {
   imports = [
+    ./aliases.nix
     ./plugins.nix
   ];
 
