@@ -5,7 +5,7 @@
 }: {
   imports = lib.flatten [
     ../modules/home/xdg
-    ./terminal/shells/zsh
+    ../modules/home/packages
     ./starship.nix
   ];
 

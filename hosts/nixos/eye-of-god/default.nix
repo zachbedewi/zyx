@@ -3,7 +3,6 @@
 # Eye Of God - Primary machine
 #
 # ========================================
-
 {
   inputs,
   inputs',
@@ -13,8 +12,7 @@
   lib,
   pkgs,
   ...
-}:
-{
+}: {
   imports = lib.flatten [
     #
     # ===== Hardware =====
@@ -74,34 +72,34 @@
   ];
 
   users.users.skitzo = {
-  	name = "skitzo";
-	shell = pkgs.zsh;
-	home = "/home/skitzo";
-	isNormalUser = true;
+    name = "skitzo";
+    shell = pkgs.zsh;
+    home = "/home/skitzo";
+    isNormalUser = true;
 
-	extraGroups = [
-		"wheel"
-		"audio"
-		"video"
-		"git"
-		"networkmanager"
-	];
+    extraGroups = [
+      "wheel"
+      "audio"
+      "video"
+      "git"
+      "networkmanager"
+    ];
   };
 
   programs.git.enable = true;
 
   users.users.root = {
-  	shell = pkgs.zsh;
+    shell = pkgs.zsh;
   };
 
   home-manager = {
-  	extraSpecialArgs = {
-		inherit inputs self inputs' self' pkgs;
-	};
+    extraSpecialArgs = {
+      inherit inputs self inputs' self' pkgs;
+    };
 
-	users.skitzo.imports = [
-		../../../home
-	];
+    users.skitzo.imports = [
+      ../../../home
+    ];
   };
 
   # https://wiki.nixos.org/wiki/FAQ/When_do_I_update_stateVersion

@@ -5,7 +5,7 @@
     inputs.flake-parts.lib.mkFlake {inherit inputs;} {
       debug = true;
       systems = ["x86_64-linux"];
-      imports = [ ./hosts ];
+      imports = [./hosts];
     };
 
   inputs = {
@@ -17,8 +17,8 @@
     };
 
     home-manager = {
-    	url = "github:nix-community/home-manager/release-24.11";
-    	inputs.nixpkgs.follows = "nixpkgs";
+      url = "github:nix-community/home-manager/release-24.11";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 }
