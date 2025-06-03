@@ -6,9 +6,9 @@
       git = true;
       enableZshIntegration = false;
       extraOptions = [
-      	"--oneline"
-	"--long"
-	"--all"
+        "--oneline"
+        "--long"
+        "--all"
         "--group-directories-first"
         "--header"
       ];
