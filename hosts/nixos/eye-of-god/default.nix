@@ -20,6 +20,7 @@
     ./hardware-configuration.nix
 
     inputs.home-manager.nixosModules.home-manager
+    inputs.stylix.nixosModules.stylix
   ];
 
   programs.zsh.enable = true;
@@ -85,6 +86,14 @@
       "networkmanager"
     ];
   };
+  
+  stylix = {
+    enable = true;
+    image = config.lib.stylix.pixel "base0A";
+    base16Scheme = "${pkgs.base16-schemes}/share/themes/catppuccin-mocha.yaml";
+  };
+
+  home-manager.backupFileExtension = "backup";
 
   programs.git.enable = true;
 
