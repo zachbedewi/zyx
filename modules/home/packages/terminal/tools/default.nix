@@ -2,5 +2,6 @@
   imports = [
     ./eza
     ./zoxide
+    ./bat
   ];
 }

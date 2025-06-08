@@ -99,8 +99,6 @@
     base16Scheme = "${pkgs.base16-schemes}/share/themes/catppuccin-mocha.yaml";
   };
 
-  home-manager.backupFileExtension = "backup";
-
   programs.git.enable = true;
 
   users.users.root = {
@@ -108,6 +106,7 @@
   };
 
   home-manager = {
+    backupFileExtension = "backup";
     extraSpecialArgs = {
       inherit inputs self inputs' self' pkgs;
     };
