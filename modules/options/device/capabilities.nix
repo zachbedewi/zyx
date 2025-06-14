@@ -3,10 +3,10 @@
   inherit (lib.types) bool;
 in {
   options.modules.device = {
-    hasSound = mkOption {
+    hasAudio = mkOption {
       type = bool;
       default = true;
-      description = "True if the device has sound support. False otherwise.";
+      description = "True if the device has support for audio. False otherwise.";
     };
   };
 }

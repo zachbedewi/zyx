@@ -1,6 +1,5 @@
 {
   imports = [
     ./device
-    ./system
   ];
 }

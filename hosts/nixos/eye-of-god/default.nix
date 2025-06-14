@@ -22,11 +22,19 @@
     inputs.home-manager.nixosModules.home-manager
     inputs.stylix.nixosModules.stylix
     ../../../modules/options
+    ../../../modules/system/nixos
   ];
 
   config = {
-    modules.device = {
-      type = "laptop";
+    modules = {
+      device = {
+        type = "laptop";
+        hasAudio = true;
+      };
+
+      system = {
+        audio.enable = true;
+      };
     };
 
     programs.zsh.enable = true;
