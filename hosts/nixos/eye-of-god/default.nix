@@ -37,8 +37,6 @@
       };
     };
 
-    programs.zsh.enable = true;
-
     nix = {
       settings = {
         experimental-features = ["nix-command" "flakes"];
@@ -97,8 +95,6 @@
       image = config.lib.stylix.pixel "base0A";
       base16Scheme = "${pkgs.base16-schemes}/share/themes/catppuccin-mocha.yaml";
     };
-
-    programs.git.enable = true;
 
     home-manager = {
       backupFileExtension = "backup";
