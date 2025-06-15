@@ -25,5 +25,7 @@
       url = "github:danth/stylix/release-24.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
   };
 }
