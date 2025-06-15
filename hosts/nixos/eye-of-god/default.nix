@@ -23,6 +23,7 @@
     inputs.stylix.nixosModules.stylix
     ../../../modules/options
     ../../../modules/system/nixos
+    ../../../modules/system/common
   ];
 
   config = {
@@ -34,12 +35,6 @@
 
       system = {
         audio.enable = true;
-      };
-    };
-
-    nix = {
-      settings = {
-        experimental-features = ["nix-command" "flakes"];
       };
     };
 
