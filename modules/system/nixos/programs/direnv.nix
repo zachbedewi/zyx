@@ -8,7 +8,7 @@
 
     loadInNixShell = true;
 
-        direnvrcExtra = ''
+    direnvrcExtra = ''
       : ''${XDG_CACHE_HOME:=$HOME/.cache}
       declare -A direnv_layout_dirs
 

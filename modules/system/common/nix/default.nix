@@ -44,8 +44,8 @@ in {
 
       use-registries = true;
       flake-registry = pkgs.writeText "flakes-empty.json" (builtins.toJSON {
-      	flakes = [];
-	version = 2;
+        flakes = [];
+        version = 2;
       });
 
       min-free = "${toString (5 * 1024 * 1024 * 1024)}";
@@ -71,13 +71,13 @@ in {
 
       extra-experimental-features = [
         "flakes"
-	"nix-command"
-	"recursive-nix"
-	"auto-allocate-uids"
-	"cgroups"
-	"repl-flake"
-	"no-url-literals"
-	"dynamic-derivations"
+        "nix-command"
+        "recursive-nix"
+        "auto-allocate-uids"
+        "cgroups"
+        "repl-flake"
+        "no-url-literals"
+        "dynamic-derivations"
       ];
 
       pure-eval = false;

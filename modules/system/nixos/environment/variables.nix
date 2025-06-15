@@ -19,8 +19,8 @@ in {
     SYSTEMD_LESS = concatStringsSep " " (pagerArgs
       ++ [
         "--quit-if-one-screen"
-	"--chop-long-lines"
-	"--no-init"
+        "--chop-long-lines"
+        "--no-init"
       ]);
   };
 }

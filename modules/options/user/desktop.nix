@@ -21,20 +21,20 @@ in {
     desktops = {
       hyprland = {
         enable = mkOption {
-	  type = bool;
-	  default = cfg.desktop == "Hyprland";
-	  description = ''
-	    Set to true to enable the Hyprland window manager.
-	  '';
-	};
+          type = bool;
+          default = cfg.desktop == "Hyprland";
+          description = ''
+            Set to true to enable the Hyprland window manager.
+          '';
+        };
 
-	package = mkOption {
-	  type = package;
-	  default = inputs'.hyprland.packages.hyprland;
-	  description = ''
-	    The Hyprland package to use.
-	  '';
-	};
+        package = mkOption {
+          type = package;
+          default = inputs'.hyprland.packages.hyprland;
+          description = ''
+            The Hyprland package to use.
+          '';
+        };
       };
     };
   };
