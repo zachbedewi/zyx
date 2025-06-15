@@ -2,5 +2,6 @@
   imports = [
     ./device
     ./security
+    ./users
   ];
 }

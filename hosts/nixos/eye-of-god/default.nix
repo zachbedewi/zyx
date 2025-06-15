@@ -92,21 +92,6 @@
       deadnix
     ];
 
-    users.users.skitzo = {
-      name = "skitzo";
-      shell = pkgs.zsh;
-      home = "/home/skitzo";
-      isNormalUser = true;
-
-      extraGroups = [
-        "wheel"
-        "audio"
-        "video"
-        "git"
-        "networkmanager"
-      ];
-    };
-
     stylix = {
       enable = true;
       image = config.lib.stylix.pixel "base0A";
@@ -114,10 +99,6 @@
     };
 
     programs.git.enable = true;
-
-    users.users.root = {
-      shell = pkgs.zsh;
-    };
 
     home-manager = {
       backupFileExtension = "backup";
