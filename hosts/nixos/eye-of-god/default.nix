@@ -71,12 +71,15 @@
     services.xserver.displayManager.autoLogin.enable = true;
     services.xserver.displayManager.autoLogin.user = "skitzo";
 
+    nixpkgs.config.allowUnfree = true;
+
     environment.systemPackages = with pkgs; [
       firefox
       alejandra
       neovim
       statix
       deadnix
+      claude-code
     ];
 
     stylix = {
