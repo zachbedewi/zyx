@@ -253,6 +253,96 @@ This document provides a detailed breakdown of tasks needed to improve the modul
 - Regression testing prevents breaking changes
 - Test documentation is comprehensive
 
+### Task 5.1.1: Device Options Module Testing Implementation
+**Priority: High**
+**Dependencies: Task 1.2 (Device Capabilities System)**
+
+#### Overview:
+Implement comprehensive testing for the device options module using modern NixOS testing frameworks. This includes unit testing for individual module logic and integration testing for complete system configurations.
+
+#### Testing Strategy:
+**Unit Testing (NixTest Framework)**
+- Test option defaults and type validation
+- Test capability dependency assertions
+- Test edge cases and error conditions
+
+**Integration Testing (NixOS Test Framework)**  
+- Test module integration in VM environments
+- Test capability detection on different hardware profiles
+- Test cross-module dependencies
+
+**Configuration Validation Testing**
+- Test all device type configurations
+- Test capability combination matrix
+- Test assertion failure scenarios
+
+#### Subtasks:
+- [ ] Create `tests/unit/device/` directory structure
+- [ ] Implement NixTest unit tests for `capabilities.nix`:
+  - [ ] Test `hasAudio` option defaults and validation
+  - [ ] Test `hasGUI` option behavior
+  - [ ] Test `hasGPU` option and GPU detection logic
+  - [ ] Test `hasWayland` option dependency on GPU and Linux
+  - [ ] Test `supportsCompositing` capability combinations
+  - [ ] Test assertion validation for capability dependencies
+- [ ] Implement NixTest unit tests for `hardware.nix`:
+  - [ ] Test device type enumeration (laptop/desktop/server/vm)
+  - [ ] Test device type validation assertions
+  - [ ] Test null/empty device type error handling
+- [ ] Create `tests/integration/device/` directory structure
+- [ ] Implement NixOS integration tests:
+  - [ ] Test laptop configuration with all capabilities enabled
+  - [ ] Test desktop configuration with GPU and Wayland support
+  - [ ] Test server configuration (headless, no GUI)
+  - [ ] Test VM configuration with minimal capabilities
+  - [ ] Test capability detection in different hardware scenarios
+  - [ ] Test cross-module interactions (device + services)
+- [ ] Create configuration validation test suite:
+  - [ ] Test valid capability combinations
+  - [ ] Test invalid capability combinations (should fail assertions)
+  - [ ] Test edge cases (Wayland without GPU, compositing without GUI)
+  - [ ] Test device type migration scenarios
+- [ ] Add tests to flake `checks` output for CI integration
+- [ ] Create test documentation and examples
+- [ ] Add performance benchmarks for module evaluation
+
+#### Implementation Files:
+```
+tests/
+├── unit/device/
+│   ├── capabilities-test.nix          # Unit tests for capabilities.nix
+│   ├── hardware-test.nix              # Unit tests for hardware.nix
+│   └── default-test.nix               # Unit tests for default.nix
+├── integration/device/
+│   ├── laptop-config-test.nix         # Laptop configuration integration test
+│   ├── desktop-config-test.nix        # Desktop configuration integration test
+│   ├── server-config-test.nix         # Server configuration integration test
+│   ├── vm-config-test.nix             # VM configuration integration test
+│   └── capability-detection-test.nix  # Hardware capability detection test
+├── validation/device/
+│   ├── valid-combinations-test.nix    # Test valid capability combinations
+│   ├── invalid-combinations-test.nix  # Test assertion failures
+│   └── edge-cases-test.nix            # Test boundary conditions
+└── lib/
+    ├── test-utils.nix                 # Common testing utilities
+    └── mock-hardware.nix              # Mock hardware configurations
+```
+
+#### Testing Framework Setup:
+- **NixTest**: Pure Nix unit testing framework for individual module logic
+- **NixOS Test Framework**: VM-based integration testing for complete configurations  
+- **Flake Integration**: All tests accessible via `nix flake check`
+- **CI Integration**: Automated testing on configuration changes
+
+#### Acceptance Criteria:
+- All device option functionality is covered by unit tests
+- Integration tests validate module behavior in real NixOS configurations
+- Test suite catches capability dependency violations
+- All tests run successfully via `nix flake check`
+- Test documentation explains how to add new tests
+- Performance regression testing prevents evaluation slowdowns
+- Test suite serves as documentation for module behavior
+
 ### Task 5.2: Create Comprehensive Documentation
 **Priority: Medium**
 **Dependencies: All previous tasks**
@@ -290,6 +380,40 @@ This document provides a detailed breakdown of tasks needed to improve the modul
 - Configuration validation catches errors early
 - Update procedures are documented and tested
 
+## Current Work-in-Progress Status
+
+### Task 6.3: Hyprland Core Module (PARTIALLY COMPLETE)
+**Status**: System-level configuration complete, Home Manager integration in progress
+
+**Completed Work**:
+- ✅ Enhanced device capabilities with Wayland, GPU, and compositing detection
+- ✅ Created display/desktop environment abstraction framework  
+- ✅ Successfully migrated Plasma configuration to use abstraction
+- ✅ Implemented system-level Hyprland module with package management and service configuration
+- ✅ Added capability checks and environment variables
+
+**Work in Progress**:
+- 🔄 Migrating user-specific Hyprland configuration to Home Manager modules
+- 🔄 Creating template-based and hybrid configuration approaches
+- ⏳ User configuration files (hyprland.conf) moved to `modules/home/desktop/wayland/hyprland/`
+
+**Next Session Tasks**:
+1. Complete Home Manager Hyprland module with template/hybrid/custom configuration methods
+2. Integrate Home Manager desktop modules into main home configuration
+3. Test Hyprland activation as alternative to Plasma
+4. Begin Task 6.4: System integration (audio, theming, terminal, packages)
+
+**File Structure Created**:
+```
+modules/
+├── system/nixos/services/display/          # System-level DE abstraction
+│   ├── default.nix                         # Main display service interface
+│   ├── x11/plasma.nix                      # Plasma configuration (migrated)
+│   └── wayland/hyprland/default.nix        # Hyprland system config
+└── home/desktop/wayland/hyprland/          # User-specific config (WIP)
+    └── hyprland.conf                       # Template config file
+```
+
 ## Implementation Notes
 
 ### Recommended Implementation Order:
@@ -312,6 +436,164 @@ This document provides a detailed breakdown of tasks needed to improve the modul
 - Configuration evaluation time doesn't significantly increase
 - Documentation enables easy onboarding of new machines/platforms
 
+## Phase 6: Hyprland Window Manager Integration
+
+### Task 6.1: Enhance Device Capabilities for Wayland Support
+**Priority: High**
+**Dependencies: Task 1.2**
+
+#### Requirements Analysis:
+- **Cross-platform compatibility**: Designed for future Linux distro support
+- **Alternative DE**: Hyprland as alternative to current desktop environment
+- **Layered architecture**: Service abstraction + feature flag + standalone module
+- **Configuration approach**: Both hybrid and template-based for comparison
+- **Ecosystem scope**: Core Hyprland initially, then Hyprpaper/Hyprlock/Hypridle
+- **System integration**: Full integration with audio, theming, terminal, packages
+- **Capability-driven**: Depends on hasGUI, hasWayland, supportsCompositing, GPU detection
+- **Multi-DE support**: Ability to switch between Plasma/Hyprland
+- **Configuration scope**: Personal use case, not general-purpose Nix module
+
+#### Subtasks:
+- [x] Add `hasWayland` capability to `modules/options/device/capabilities.nix`
+- [x] Add `supportsCompositing` capability with GPU detection logic
+- [x] Add `hasGPU` capability with basic GPU hardware detection
+- [x] Extend `hasGUI` capability (if not already present)
+- [x] Create capability dependency validation (Wayland requires GUI, etc.)
+- [x] Test capability detection on current system
+
+#### Acceptance Criteria:
+- New capabilities are properly detected on the current system
+- Capability dependencies are validated and enforced
+- GPU detection works for common graphics drivers
+- Wayland capability correctly identifies Wayland support
+
+### Task 6.2: Create Display/Desktop Environment Abstraction Framework
+**Priority: High**
+**Dependencies: Task 6.1, Task 2.1**
+
+#### Subtasks:
+- [x] Create `modules/services/display/` directory structure
+- [x] Design desktop environment abstraction interface in `modules/services/display/default.nix`
+- [x] Create `modules/services/display/x11/` for X11-based environments
+- [x] Create `modules/services/display/wayland/` for Wayland-based environments
+- [x] Implement current Plasma configuration as `modules/services/display/x11/plasma.nix`
+- [x] Add desktop environment selection option in `modules/options/user/desktop.nix`
+- [x] Create conditional loading based on selected DE and capabilities
+- [x] Test current Plasma setup continues working through abstraction
+
+#### Acceptance Criteria:
+- Desktop environments are properly abstracted
+- Current Plasma configuration works identically through new abstraction
+- DE selection is capability-aware (won't load Wayland DE without Wayland support)
+- Foundation exists for multiple DE support
+
+### Task 6.3: Implement Hyprland Core Module
+**Priority: High**
+**Dependencies: Task 6.2**
+
+#### Subtasks:
+- [x] Create `modules/services/display/wayland/hyprland/` directory structure
+- [x] Implement `modules/services/display/wayland/hyprland/default.nix` main module
+- [x] Add Hyprland package management and service configuration
+- [ ] Create basic Hyprland configuration template system (IN PROGRESS - moved to Home Manager)
+- [ ] Implement hybrid configuration approach (Nix base + user overrides)
+- [x] Add Hyprland-specific capability checks (Wayland, GPU, compositing)
+- [x] Create Hyprland environment variables and session setup
+- [ ] Test Hyprland activation without breaking existing Plasma setup
+
+#### Implementation Notes:
+- **Architecture Decision**: Moved user-specific Hyprland configuration to Home Manager modules rather than system-level
+- **Rationale**: Different users should be able to choose different desktop environments
+- **Current State**: System-level module handles Hyprland enablement, XDG portals, and essential packages
+- **Next Steps**: Complete Home Manager module for user-specific Hyprland configuration (templates, hybrid, custom methods)
+
+#### Acceptance Criteria:
+- Hyprland can be enabled as alternative to Plasma
+- Basic Hyprland session starts and functions
+- Configuration template system works
+- Hybrid configuration allows user customizations
+- No interference with existing Plasma configuration
+
+### Task 6.4: Integrate Hyprland with Existing Systems
+**Priority: Medium**
+**Dependencies: Task 6.3**
+
+#### Subtasks:
+- [ ] Integrate Hyprland with existing audio abstraction (PipeWire/PulseAudio)
+- [ ] Add Stylix theme integration for Hyprland
+- [ ] Configure Kitty terminal to work optimally with Hyprland
+- [ ] Add Hyprland-specific packages to centralized package management
+- [ ] Create Hyprland-specific XDG desktop portal configuration
+- [ ] Implement proper session management and login integration
+- [ ] Test all integrations work correctly
+
+#### Acceptance Criteria:
+- Audio works correctly in Hyprland sessions
+- Stylix theming applies to Hyprland
+- Terminal integration is seamless
+- All necessary packages are automatically installed with Hyprland
+- Desktop portals function properly
+
+### Task 6.5: Implement Desktop Environment Feature Flag System
+**Priority: Medium**
+**Dependencies: Task 6.4, Task 3.2 (when implemented)**
+
+#### Subtasks:
+- [ ] Add desktop environment feature flags to `modules/options/features/`
+- [ ] Create `features.desktop.plasma.enable` option
+- [ ] Create `features.desktop.hyprland.enable` option
+- [ ] Implement mutual exclusion logic (prevent both DEs active simultaneously)
+- [ ] Add DE-specific feature dependencies (Hyprland requires Wayland features)
+- [ ] Create feature presets for different use cases
+- [ ] Update host configurations to use DE feature flags
+- [ ] Test feature flag switching between DEs
+
+#### Acceptance Criteria:
+- Desktop environments can be enabled/disabled via feature flags
+- Mutual exclusion prevents conflicts
+- Feature dependencies are automatically resolved
+- Easy switching between Plasma and Hyprland
+- Host configurations are simplified
+
+### Task 6.6: Implement Template and Hybrid Configuration Systems
+**Priority: Medium**
+**Dependencies: Task 6.3**
+
+#### Subtasks:
+- [ ] Create Hyprland configuration template in `modules/services/display/wayland/hyprland/templates/`
+- [ ] Implement template generation with Nix string interpolation
+- [ ] Create user override system for hybrid approach
+- [ ] Add configuration validation for both approaches
+- [ ] Create example configurations demonstrating both methods
+- [ ] Document configuration approaches and trade-offs
+- [ ] Test both configuration methods work correctly
+
+#### Acceptance Criteria:
+- Template-based configuration generates valid Hyprland config
+- Hybrid approach allows user customizations without conflicts
+- Configuration validation catches common errors
+- Documentation explains both approaches clearly
+- User can choose preferred configuration method
+
+### Task 6.7: Prepare Hyprland Ecosystem Extensions
+**Priority: Low**
+**Dependencies: Task 6.6**
+
+#### Subtasks:
+- [ ] Create extension framework in `modules/services/display/wayland/hyprland/extensions/`
+- [ ] Design Hyprpaper wallpaper daemon integration
+- [ ] Design Hyprlock screen locker integration
+- [ ] Design Hypridle idle daemon integration
+- [ ] Create extension capability detection
+- [ ] Implement extension configuration templates
+- [ ] Document extension system for future development
+
+#### Acceptance Criteria:
+- Extension framework is ready for future implementation
+- Hyprpaper, Hyprlock, and Hypridle designs are documented
+- Extension system integrates with main Hyprland configuration
+- Framework supports both template and hybrid configuration approaches
+
 ## Future Considerations
 
 After completing this roadmap, consider:
@@ -321,3 +603,7 @@ After completing this roadmap, consider:
 - Home server and VPS configurations
 - Advanced testing with NixOS test framework
 - Configuration optimization and caching strategies
+- Hyprland ecosystem completion (Hyprpaper, Hyprlock, Hypridle)
+- Additional Wayland compositors (Sway, River, etc.)
+- Status bar integration (Waybar, Eww, etc.)
+- Application launcher integration (wofi, rofi-wayland, etc.)

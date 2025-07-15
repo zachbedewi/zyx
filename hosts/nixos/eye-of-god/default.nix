@@ -36,6 +36,14 @@
       system = {
         audio.enable = true;
       };
+
+      services = {
+        display = {
+          enable = true;
+          backend = "x11";
+          desktopEnvironment = "plasma";
+        };
+      };
     };
 
     boot.loader = {
@@ -57,19 +65,8 @@
       enableIPv6 = false;
     };
 
-    # Enable the X11 windowing system.
-    services.xserver.enable = true;
-
     services.ntp.enable = true;
     services.automatic-timezoned.enable = true;
-
-    # Enable the KDE Plasma Desktop Environment.
-    services.xserver.displayManager.sddm.enable = true;
-    services.xserver.desktopManager.plasma5.enable = true;
-
-    # Enable automatic login for the user.
-    services.xserver.displayManager.autoLogin.enable = true;
-    services.xserver.displayManager.autoLogin.user = "skitzo";
 
     nixpkgs.config.allowUnfree = true;
 

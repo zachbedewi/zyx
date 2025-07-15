@@ -4,6 +4,7 @@
     ./environment
     ./programs
     ./security
+    ./services
     ./users
   ];
 }
