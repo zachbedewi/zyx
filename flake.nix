@@ -27,5 +27,10 @@
     };
 
     hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
+
+    minimal-emacs = {
+      url = "github:jamescherti/minimal-emacs.d";
+      flake = false;
+    };
   };
 }

@@ -509,6 +509,22 @@
         "type": "github"
       }
     },
+    "minimal-emacs": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1752929199,
+        "narHash": "sha256-N5jiPD5X/ZDZmWlDFMRHc6DsaPWqUFehFkUzOE8IFa8=",
+        "owner": "jamescherti",
+        "repo": "minimal-emacs.d",
+        "rev": "95102161a70f05aa2672a05289484b44d28c7255",
+        "type": "github"
+      },
+      "original": {
+        "owner": "jamescherti",
+        "repo": "minimal-emacs.d",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1751792365,
@@ -594,6 +610,7 @@
         "flake-parts": "flake-parts",
         "home-manager": "home-manager",
         "hyprland": "hyprland",
+        "minimal-emacs": "minimal-emacs",
         "nixpkgs": "nixpkgs_2",
         "stylix": "stylix"
       }
