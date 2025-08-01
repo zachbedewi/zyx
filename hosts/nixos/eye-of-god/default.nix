@@ -77,6 +77,7 @@
       statix
       deadnix
       claude-code
+      nil
     ];
 
     stylix = {
