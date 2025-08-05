@@ -1,4 +1,24 @@
-;; Elpaca bootstrap
+;;; pre-early-init.el --- Pre-early Init -*- no-byte-compile: t; lexical-binding: t; -*-
+
+;; Author: Zach Bedewi
+;; Package-Requires: ((emacs "30"))
+;; Keywords: maintenance, package
+;; Version: 1.0
+
+;;; Commentary:
+;; This file is loaded before the early-init.el file from the minimal-emacs.d framework.
+;; It is responsible for bootstrapping Elpaca for pacakge management 
+;; and keeping the configuration directory clean.
+
+;;; Code:
+
+;;; Reducing clutter in ~/.config/emacs by redirecting files to ~/.config/emacs/var
+(setq user-emacs-directory (expand-file-name "var/" minimal-emacs-user-directory))
+(setq package-user-dir (expand-file-name "elpa" user-emacs-directory))
+
+
+;;; Elpaca bootstrap
+
 (defvar elpaca-installer-version 0.11)
 (defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
 (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
