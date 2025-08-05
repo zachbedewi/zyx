@@ -23,4 +23,4 @@
 
 ;; Core Features
 (require 'xeromacs-completion)
-
+(require 'xeromacs-treesitter)
