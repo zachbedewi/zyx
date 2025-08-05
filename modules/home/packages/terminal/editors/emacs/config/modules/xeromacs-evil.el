@@ -54,6 +54,7 @@
 (use-package evil-collection
   :after evil
   :ensure t
+  :hook (elpaca-after-init . evil-mode)
   :init
   ;; Must be defined before evil-collection
   (setq evil-collection-setup-minibuffer t)
