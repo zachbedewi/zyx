@@ -12,11 +12,6 @@
 
 ;;; Code:
 
-;;; Reducing clutter in ~/.config/emacs by redirecting files to ~/.config/emacs/var
-(setq user-emacs-directory (expand-file-name "var/" minimal-emacs-user-directory))
-(setq package-user-dir (expand-file-name "elpa" user-emacs-directory))
-
-
 ;;; Elpaca bootstrap
 
 (defvar elpaca-installer-version 0.11)
