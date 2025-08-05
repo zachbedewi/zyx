@@ -11,3 +11,8 @@
 ;; in this configuration.
 
 ;;; Code:
+
+(add-to-list 'load-path (file-name-as-directory
+                         (expand-file-name "modules" minimal-emacs-user-directory)))
+
+(require 'xeromacs-compilation)
