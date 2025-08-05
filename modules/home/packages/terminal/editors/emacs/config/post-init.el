@@ -15,4 +15,8 @@
 (add-to-list 'load-path (file-name-as-directory
                          (expand-file-name "modules" minimal-emacs-user-directory)))
 
+;; Native compilation (This must be the first module that is loaded)
 (require 'xeromacs-compilation)
+
+;; Keybindings
+(require 'xeromacs-evil)

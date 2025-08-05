@@ -13,7 +13,7 @@
 
 ;;; Code:
 (use-package compile-angel
-  :ensure t
+  :ensure (:wait t)
   :demand t
   :custom
   (compile-angel-verbose t)
