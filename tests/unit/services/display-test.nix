@@ -235,7 +235,7 @@ in {
           services.display.enable = true;
         }
       ];
-      expected = true;
+      expectedError = true;
     }
 
     {
@@ -250,7 +250,7 @@ in {
           services.display.acceleration = true;
         }
       ];
-      expected = true;
+      expectedError = true;
     }
 
     {
@@ -265,7 +265,7 @@ in {
           services.display.backend = "wayland";
         }
       ];
-      expected = true;
+      expectedError = true;
     }
 
     {
@@ -280,7 +280,7 @@ in {
           services.display.vrSupport = true;
         }
       ];
-      expected = true;
+      expectedError = true;
     }
 
     {
@@ -295,7 +295,7 @@ in {
           services.display.desktopEnvironment = "hyprland";
         }
       ];
-      expected = true;
+      expectedError = true;
     }
 
     {
@@ -310,7 +310,7 @@ in {
           services.display.desktopEnvironment = "sway";
         }
       ];
-      expected = true;
+      expectedError = true;
     }
 
     # Implementation details tests

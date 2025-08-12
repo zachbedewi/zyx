@@ -46,9 +46,14 @@ in {
     platform.type = platform;
   } // extraConfig;
 
-  # Assertion test helper
+  # Assertion test helper - evaluates with module checking enabled
   assertionShouldFail = modules: 
-    let result = builtins.tryEval (evalConfig modules).config;
+    let 
+      evalConfigWithChecks = modules: lib.evalModules {
+        modules = modules;
+        specialArgs = { inherit pkgs; };
+      };
+      result = builtins.tryEval (evalConfigWithChecks modules).config;
     in !result.success;
 
   # Helper to extract specific config paths for testing
