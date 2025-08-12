@@ -11,6 +11,7 @@ let
   securityTests = import ./unit/services/security-test.nix { inherit lib pkgs; };
   sshTests = import ./unit/services/ssh-test.nix { inherit lib pkgs; };
   secretsTests = import ./unit/services/secrets-test.nix { inherit lib pkgs; };
+  userTests = import ./unit/services/user-test.nix { inherit lib pkgs; };
   
   # Run unit tests
   runUnitTests = testName: tests:
@@ -55,7 +56,8 @@ let
   securityUnitTests = runUnitTests "security" securityTests.tests;
   sshUnitTests = runUnitTests "ssh" sshTests.tests;
   secretsUnitTests = runUnitTests "secrets" secretsTests.tests;
-  allUnitTests = audioUnitTests // displayUnitTests // networkingUnitTests // securityUnitTests // sshUnitTests // secretsUnitTests;
+  userUnitTests = runUnitTests "user" userTests.tests;
+  allUnitTests = audioUnitTests // displayUnitTests // networkingUnitTests // securityUnitTests // sshUnitTests // secretsUnitTests // userUnitTests;
   
   # Combine all test results
   allTests = runBasicTests // allUnitTests;
@@ -75,6 +77,7 @@ in {
   securityResults = securityUnitTests;
   sshResults = sshUnitTests;
   secretsResults = secretsUnitTests;
+  userResults = userUnitTests;
   
   # Check function for flake integration
   check = 

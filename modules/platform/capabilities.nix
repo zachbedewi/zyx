@@ -42,6 +42,14 @@
           config.platform.capabilities.isLinux;
       };
 
+      hasX11 = lib.mkOption {
+        type = lib.types.bool;
+        description = "Whether this device supports X11 display server";
+        default = 
+          config.device.capabilities.hasGUI && 
+          config.platform.capabilities.isLinux;
+      };
+
       supportsCompositing = lib.mkOption {
         type = lib.types.bool;
         description = "Whether this device supports desktop compositing";
@@ -165,6 +173,13 @@
           config.device.capabilities.hasTPM ||
           config.device.type == "laptop" ||
           config.device.type == "desktop";
+      };
+
+      # User management capabilities
+      hasUsers = lib.mkOption {
+        type = lib.types.bool;
+        description = "Whether this device supports user management and profiles";
+        default = true;  # All device types support users by default
       };
     };
 

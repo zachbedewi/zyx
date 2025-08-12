@@ -65,6 +65,13 @@
         readOnly = true;
         default = config.platform.type == "darwin";
       };
+
+      supportsUsers = lib.mkOption {
+        type = lib.types.bool;
+        description = "Whether this platform supports user management";
+        readOnly = true;
+        default = true;  # All platforms support user management
+      };
     };
   };
 

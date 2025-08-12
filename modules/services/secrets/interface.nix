@@ -468,48 +468,5 @@
         message = "Audit tamper protection requires audit logging to be enabled";
       }
     ];
-
-    # Auto-select backend based on platform capabilities and available tools
-    services.secrets.backend = lib.mkDefault (
-      if config.services.secrets.backend == "auto" then
-        if config.device.capabilities.hasNixOS then "sops"
-        else if config.device.capabilities.isDarwin then "age"
-        else "gpg"
-      else config.services.secrets.backend
-    );
-
-    # Auto-configure security integration if available
-    services.secrets.integration.security.hardeningLevel = lib.mkDefault (
-      config.services.security.hardening.level or "standard"
-    );
-
-    # Auto-configure password complexity based on security hardening level
-    services.secrets.types.passwords.complexity = lib.mkDefault (
-      let hardeningLevel = config.services.security.hardening.level or "standard";
-      in if hardeningLevel == "paranoid" then "paranoid"
-         else if hardeningLevel == "high" then "high"
-         else "standard"
-    );
-
-    # Auto-configure audit logging based on security monitoring
-    services.secrets.audit.logLevel = lib.mkDefault (
-      let hardeningLevel = config.services.security.hardening.level or "standard";
-      in if config.services.security.monitoring.enable or false then
-           if hardeningLevel == "paranoid" then "paranoid"
-           else "detailed"
-         else "standard"
-    );
-
-    # Auto-configure encryption algorithm based on device capabilities
-    services.secrets.storage.encryption.algorithm = lib.mkDefault (
-      if config.device.capabilities.hasTPM then "aes256gcm"
-      else if config.device.capabilities.hasHardwareRNG then "chacha20poly1305"
-      else "age"
-    );
-
-    # Auto-configure memory protection on capable devices
-    services.secrets.storage.encryption.memoryProtection = lib.mkDefault (
-      config.device.capabilities.hasMemoryProtection or true
-    );
   };
 }
