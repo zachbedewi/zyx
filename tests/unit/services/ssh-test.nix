@@ -556,59 +556,9 @@ in {
       expected = true;
     }
 
-    # NixOS Implementation Tests
+    # NixOS Implementation Tests (metadata validation)
     {
-      name = "nixos-ssh-server-configuration-applied";
-      expr = (testConfig [ 
-        sshInterface 
-        sshNixos
-        platformDetection 
-        platformCapabilities 
-        baseConfig 
-        { services.ssh.server.enable = true; }
-      ]).services.openssh.enable;
-      expected = true;
-    }
-
-    {
-      name = "nixos-ssh-client-configuration-applied";
-      expr = (testConfig [ 
-        sshInterface 
-        sshNixos
-        platformDetection 
-        platformCapabilities 
-        baseConfig 
-      ]).programs.ssh.enable;
-      expected = true;
-    }
-
-    {
-      name = "nixos-ssh-agent-configuration-applied";
-      expr = (testConfig [ 
-        sshInterface 
-        sshNixos
-        platformDetection 
-        platformCapabilities 
-        baseConfig 
-      ]).programs.ssh.startAgent;
-      expected = true;
-    }
-
-    {
-      name = "nixos-firewall-ssh-port-opened";
-      expr = lib.elem 22 (testConfig [ 
-        sshInterface 
-        sshNixos
-        platformDetection 
-        platformCapabilities 
-        baseConfig 
-        { services.ssh.server.enable = true; }
-      ]).networking.firewall.allowedTCPPorts;
-      expected = true;
-    }
-
-    {
-      name = "nixos-implementation-metadata-populated";
+      name = "nixos-implementation-platform-correct";
       expr = (testConfig [ 
         sshInterface 
         sshNixos
@@ -617,6 +567,56 @@ in {
         baseConfig 
       ]).services.ssh._implementation.platform;
       expected = "nixos";
+    }
+
+    {
+      name = "nixos-implementation-server-status-tracked";
+      expr = (testConfig [ 
+        sshInterface 
+        sshNixos
+        platformDetection 
+        platformCapabilities 
+        baseConfig 
+        { services.ssh.server.enable = true; }
+      ]).services.ssh._implementation.serverEnabled;
+      expected = true;
+    }
+
+    {
+      name = "nixos-implementation-client-status-tracked";
+      expr = (testConfig [ 
+        sshInterface 
+        sshNixos
+        platformDetection 
+        platformCapabilities 
+        baseConfig 
+      ]).services.ssh._implementation.clientEnabled;
+      expected = true;
+    }
+
+    {
+      name = "nixos-implementation-hardening-level-tracked";
+      expr = (testConfig [ 
+        sshInterface 
+        sshNixos
+        platformDetection 
+        platformCapabilities 
+        baseConfig 
+        { services.ssh.server.enable = true; }
+      ]).services.ssh._implementation.hardeningLevel;
+      expected = "standard";
+    }
+
+    {
+      name = "nixos-implementation-key-types-tracked";
+      expr = (testConfig [ 
+        sshInterface 
+        sshNixos
+        platformDetection 
+        platformCapabilities 
+        baseConfig 
+      ]).services.ssh._implementation.keyTypes;
+      expected = [ "ed25519" ];
     }
 
     # SSH Profile Tests

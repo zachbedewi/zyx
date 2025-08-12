@@ -7,18 +7,15 @@ let
   
   # Generate SSH server configuration based on hardening level
   mkServerConfig = level: {
-    protocol = "2";
-    
     # Authentication settings
     permitRootLogin = if sshConfig.server.hardening.allowRootLogin then "yes" else "no";
     passwordAuthentication = sshConfig.server.hardening.passwordAuthentication;
     challengeResponseAuthentication = sshConfig.server.hardening.challengeResponseAuthentication;
     pubkeyAuthentication = true;
-    authenticationMethods = if level == "paranoid" then "publickey" else null;
     maxAuthTries = sshConfig.server.hardening.maxAuthTries;
     
     # Connection settings
-    port = sshConfig.server.port;
+    ports = [ sshConfig.server.port ];
     clientAliveInterval = sshConfig.server.hardening.clientAliveInterval;
     clientAliveCountMax = sshConfig.server.hardening.clientAliveCountMax;
     maxSessions = sshConfig.monitoring.maxSessions;
@@ -281,10 +278,10 @@ in {
       };
     };
 
-    # Firewall Configuration
-    networking.firewall = lib.mkIf sshConfig.server.enable {
-      allowedTCPPorts = [ sshConfig.server.port ];
-    };
+    # Firewall Configuration  
+    networking.firewall.allowedTCPPorts = lib.mkIf sshConfig.server.enable (
+      lib.mkAfter [ sshConfig.server.port ]
+    );
 
     # Fail2ban Integration for SSH monitoring
     services.fail2ban = lib.mkIf (sshConfig.monitoring.enable && config.services.security.monitoring.enable) {
