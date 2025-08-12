@@ -403,33 +403,25 @@
     # Auto-select backends based on platform capabilities
     services.user = {
       profiles.synchronization.backend = lib.mkDefault (
-        if config.services.user.profiles.synchronization.backend == "auto" then
-          if config.device.capabilities.hasNetworking then "git"
-          else "rsync"
-        else config.services.user.profiles.synchronization.backend
+        if config.device.capabilities.hasNetworking then "git"
+        else "rsync"
       );
 
       applications.workspace.backend = lib.mkDefault (
-        if config.services.user.applications.workspace.backend == "auto" then
-          if config.device.capabilities.hasWayland then "hyprland"
-          else if config.device.capabilities.hasX11 then "i3"
-          else "none"
-        else config.services.user.applications.workspace.backend
+        if config.device.capabilities.hasWayland then "hyprland"
+        else if config.device.capabilities.hasX11 then "i3"
+        else "none"
       );
 
       experience.shell.defaultShell = lib.mkDefault (
-        if config.services.user.experience.shell.defaultShell == "auto" then
-          if config.device.profiles.isDevelopment then "zsh"
-          else "bash"
-        else config.services.user.experience.shell.defaultShell
+        if config.device.profiles.isDevelopment then "zsh"
+        else "bash"
       );
 
       experience.editor.defaultEditor = lib.mkDefault (
-        if config.services.user.experience.editor.defaultEditor == "auto" then
-          if config.device.profiles.isDevelopment then "nvim"
-          else if config.device.capabilities.hasGUI then "vscode"
-          else "vim"
-        else config.services.user.experience.editor.defaultEditor
+        if config.device.profiles.isDevelopment then "nvim"
+        else if config.device.capabilities.hasGUI then "vscode"
+        else "vim"
       );
 
       security.accessControl.groups = lib.mkDefault (

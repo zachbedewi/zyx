@@ -360,6 +360,17 @@ in {
           };
         };
       })
+
+      # Backup service
+      (lib.mkIf userConfig.backup.automatic {
+        zyx-user-backup = {
+          description = "Backup user configuration";
+          serviceConfig = {
+            Type = "oneshot";
+            ExecStart = "${mkBackupScript}";
+          };
+        };
+      })
     ];
 
     # Systemd timers for periodic tasks
@@ -393,14 +404,6 @@ in {
       })
     ];
 
-    # Backup timer service
-    systemd.user.services.zyx-user-backup = lib.mkIf userConfig.backup.automatic {
-      description = "Backup user configuration";
-      serviceConfig = {
-        Type = "oneshot";
-        ExecStart = "${mkBackupScript}";
-      };
-    };
 
     # Personal secrets integration
     services.secrets = lib.mkIf userConfig.security.personalSecrets.enable {

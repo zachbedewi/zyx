@@ -437,6 +437,53 @@
   };
 
   config = lib.mkIf config.services.secrets.enable {
+    # Platform-specific backend defaults
+    services.secrets.backend = lib.mkDefault (
+      if config.platform.capabilities.supportsNixOS then "sops"
+      else if config.platform.capabilities.supportsDarwin then "agenix"
+      else "age"
+    );
+
+    # Auto-select encryption algorithm based on device capabilities
+    services.secrets.storage.encryption.algorithm = lib.mkDefault (
+      if config.device.capabilities.hasTPM && config.device.type == "desktop" then "aes256gcm"
+      else "age"
+    );
+
+    # Auto-configure memory protection based on device capabilities
+    services.secrets.storage.encryption.memoryProtection = lib.mkDefault (
+      config.device.capabilities.hasMemoryProtection or true
+    );
+
+    # Auto-configure integration with other services
+    services.secrets.integration.security.enable = lib.mkDefault (
+      config.services.security.enable or false
+    );
+
+    services.secrets.integration.security.hardeningLevel = lib.mkDefault (
+      if config.services.security.enable or false 
+      then config.services.security.hardening.level or "standard"
+      else "minimal"
+    );
+
+    services.secrets.audit.logLevel = lib.mkDefault (
+      if config.services.secrets.integration.security.enable && 
+         config.services.security.monitoring.enable or false
+      then "detailed"
+      else "standard"
+    );
+
+    # Override password complexity based on security service
+    services.secrets.types.passwords.complexity = lib.mkIf config.services.secrets.integration.security.enable (
+      lib.mkDefault (
+        if config.services.security.hardening.level or "standard" == "minimal" then "basic"
+        else if config.services.security.hardening.level or "standard" == "standard" then "standard"  
+        else if config.services.security.hardening.level or "standard" == "high" then "high"
+        else if config.services.security.hardening.level or "standard" == "paranoid" then "paranoid"
+        else "standard"
+      )
+    );
+
     # Capability assertions
     assertions = [
       {
