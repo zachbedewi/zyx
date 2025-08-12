@@ -14,10 +14,10 @@ let
       results = lib.listToAttrs (map (test: {
         name = "${testName}-${test.name}";
         value = 
-          if test.expected or null == null then 
-            false  # Invalid test
-          else if test.expectedError or false then
+          if test.expectedError or false then
             test.expr
+          else if test.expected or null == null then 
+            false  # Invalid test - no expected value
           else 
             test.expr == test.expected;
       }) tests);
