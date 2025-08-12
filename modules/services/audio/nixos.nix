@@ -53,7 +53,7 @@ in {
       alsa.enable = true;
       alsa.support32Bit = true;
       pulse.enable = true;
-      jack.enable = audioConfig.quality == "studio";
+      jack.enable = audioConfig.jackSupport;
       
       # Quality-based configuration
       extraConfig.pipewire = {
@@ -102,19 +102,34 @@ in {
     # Ensure audio group exists and add users
     users.groups.audio = {};
     
-    # Add audio packages based on quality level
+    # Add audio packages based on features and quality level
     environment.systemPackages = with pkgs; [
       # Basic audio tools
       alsa-utils
       pavucontrol
-    ] ++ lib.optionals (audioConfig.quality == "high" || audioConfig.quality == "studio") [
-      # High-quality audio tools
+    ] ++ lib.optionals audioConfig.professionalAudio [
+      # Professional audio tools
       qjackctl
       carla
+      ardour
+      audacity
+    ] ++ lib.optionals audioConfig.jackSupport [
+      # JACK-specific tools
+      jack2
+      qjackctl
+      catia
+    ] ++ lib.optionals audioConfig.deviceRouting [
+      # Audio routing tools
+      helvum
+      qpwgraph
     ] ++ lib.optionals (audioConfig.backend == "pipewire") [
       # PipeWire-specific tools
       helvum
       pwvucontrol
+    ] ++ lib.optionals audioConfig.bluetoothAudio [
+      # Bluetooth audio tools
+      bluez
+      bluez-tools
     ];
 
     # ALSA configuration
@@ -123,8 +138,21 @@ in {
       enablePersistence = true;
     };
 
-    # Real-time audio configuration for studio quality
-    security.rtkit.enable = audioConfig.quality == "studio" || audioConfig.lowLatency;
+    # Bluetooth audio configuration
+    hardware.bluetooth = lib.mkIf audioConfig.bluetoothAudio {
+      enable = true;
+      powerOnBoot = true;
+      settings = {
+        General = {
+          Enable = "Source,Sink,Media,Socket";
+        };
+      };
+    };
+
+    services.blueman.enable = lib.mkIf audioConfig.bluetoothAudio true;
+
+    # Real-time audio configuration for studio quality and low latency
+    security.rtkit.enable = audioConfig.lowLatency || audioConfig.jackSupport || audioConfig.professionalAudio;
     
     # Audio group for users
     users.extraGroups.audio = {};
@@ -133,9 +161,13 @@ in {
     services.audio._implementation = {
       platform = "nixos";
       backend = audioConfig.backend;
-      pipewireEnabled = config.services.pipewire.enable;
-      pulseaudioEnabled = config.hardware.pulseaudio.enable;
-      rtkit = config.security.rtkit.enable;
+      pipewireEnabled = config.services.pipewire.enable or false;
+      pulseaudioEnabled = config.hardware.pulseaudio.enable or false;
+      jackEnabled = config.services.pipewire.jack.enable or false;
+      bluetoothEnabled = config.hardware.bluetooth.enable or false;
+      rtkit = config.security.rtkit.enable or false;
+      professionalAudio = audioConfig.professionalAudio;
+      deviceRouting = audioConfig.deviceRouting;
       qualitySettings = qualitySettings.${audioConfig.backend}.${audioConfig.quality};
     };
   };

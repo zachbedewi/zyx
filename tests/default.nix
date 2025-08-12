@@ -4,6 +4,24 @@
 let
   testUtils = import ./lib/test-utils.nix { inherit lib pkgs; };
   
+  # Import unit test modules
+  audioTests = import ./unit/services/audio-test.nix { inherit lib pkgs; };
+  
+  # Run unit tests
+  runUnitTests = testName: tests:
+    let
+      results = lib.listToAttrs (map (test: {
+        name = "${testName}-${test.name}";
+        value = 
+          if test.expected or null == null then 
+            false  # Invalid test
+          else if test.expectedError or false then
+            test.expr
+          else 
+            test.expr == test.expected;
+      }) tests);
+    in results;
+  
   # Simple test runner that evaluates our core modules
   runBasicTests = {
     # Test platform detection
@@ -25,16 +43,26 @@ let
         config.device.profiles.isWorkstation == true;
   };
 
+  # Run all unit tests
+  allUnitTests = runUnitTests "audio" audioTests.tests;
+  
+  # Combine all test results
+  allTests = runBasicTests // allUnitTests;
+  
   # Simple success check
-  allTestsPassed = lib.all (x: x) (lib.attrValues runBasicTests);
+  allTestsPassed = lib.all (x: x) (lib.attrValues allTests);
 
 in {
   # Test results
-  results = runBasicTests;
+  results = allTests;
+  
+  # Detailed results by category
+  basicResults = runBasicTests;
+  audioResults = allUnitTests;
   
   # Check function for flake integration
   check = 
     if allTestsPassed
-    then pkgs.writeText "test-success" "All basic tests passed"
-    else throw "Basic tests failed: ${builtins.toJSON runBasicTests}";
+    then pkgs.writeText "test-success" "All tests passed: ${toString (lib.length (lib.attrNames allTests))} total"
+    else throw "Tests failed: ${builtins.toJSON (lib.filterAttrs (n: v: !v) allTests)}";
 }
