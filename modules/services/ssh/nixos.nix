@@ -227,23 +227,21 @@ in {
         bits = if keyType == "rsa" then 4096 else null;
         path = "/etc/ssh/ssh_host_${keyType}_key";
       }) sshConfig.server.keyTypes;
+      
+      extraConfig = lib.mkIf sshConfig.agent.enable ''
+        # SSH Agent settings
+        MaxSessions ${toString sshConfig.agent.maxConnections}
+        ${lib.optionalString (sshConfig.agent.timeout != null) 
+          "ClientAliveInterval ${sshConfig.agent.timeout}"}
+      '';
     });
 
     # SSH Client Configuration
     programs.ssh = lib.mkIf sshConfig.client.enable {
       enable = true;
       extraConfig = mkClientConfig sshConfig.client.profiles;
+      startAgent = lib.mkIf sshConfig.agent.enable true;
     };
-
-    # SSH Agent Configuration
-    programs.ssh.startAgent = lib.mkIf sshConfig.agent.enable true;
-    
-    services.openssh.extraConfig = lib.mkIf (sshConfig.agent.enable && sshConfig.server.enable) ''
-      # SSH Agent settings
-      MaxSessions ${toString sshConfig.agent.maxConnections}
-      ${lib.optionalString (sshConfig.agent.timeout != null) 
-        "ClientAliveInterval ${sshConfig.agent.timeout}"}
-    '';
 
     # SSH Key Management
     environment.systemPackages = lib.optionals sshConfig.keys.enable (
