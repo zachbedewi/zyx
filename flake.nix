@@ -6,6 +6,14 @@
       debug = true;
       systems = ["x86_64-linux"];
       imports = [./hosts];
+      
+      perSystem = { config, self', inputs', pkgs, system, ... }: {
+        # Add test checks
+        checks.tests = import ./tests { 
+          inherit (pkgs) lib;
+          inherit pkgs; 
+        }.check;
+      };
     };
 
   inputs = {
