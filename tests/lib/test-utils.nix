@@ -1,7 +1,7 @@
 # Common testing utilities for the Zyx configuration
 { lib, pkgs ? import <nixpkgs> {} }:
 
-{
+let
   # Evaluate a module configuration for testing
   evalConfig = modules: lib.evalModules {
     modules = modules ++ [
@@ -10,6 +10,9 @@
     ];
     specialArgs = { inherit pkgs; };
   };
+
+in {
+  inherit evalConfig;
 
   # Create a test case for option evaluation
   mkOptionTest = { name, modules, expected, expectedError ? false }: {
