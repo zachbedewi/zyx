@@ -44,6 +44,459 @@ This document provides a comprehensive implementation plan for redesigning the Z
 - Use lazy evaluation and caching where appropriate
 - Profile configuration builds to identify bottlenecks
 
+## Current Implementation Reference
+
+### File Structure Overview
+
+The new architecture introduces a clear separation of concerns with the following structure:
+
+```
+zyx/
+├── flake.nix                    # Main flake with test integration
+├── modules/
+│   ├── platform/               # NEW: Platform detection and capabilities
+│   │   ├── detection.nix       # Platform detection (nixos/darwin/droid)
+│   │   └── capabilities.nix    # Device capabilities and profiles
+│   ├── services/               # NEW: Service abstractions
+│   │   └── audio/
+│   │       ├── interface.nix   # Platform-agnostic audio API
+│   │       └── nixos.nix       # NixOS audio implementation
+│   ├── options/ (existing)     # Legacy options - being phased out
+│   ├── system/ (existing)      # Legacy system modules
+│   └── home/ (existing)        # Legacy home modules
+├── tests/                      # NEW: Comprehensive testing framework
+│   ├── default.nix            # Main test runner with flake integration
+│   ├── framework/
+│   │   └── nixtest.nix         # Test orchestration framework
+│   ├── lib/
+│   │   ├── test-utils.nix      # Module evaluation utilities
+│   │   └── mock-hardware.nix   # Mock configurations for testing
+│   └── unit/
+│       └── platform/
+│           ├── detection-test.nix      # Platform detection tests
+│           └── capabilities-test.nix   # Device capabilities tests
+└── hosts/ (existing)           # Host configurations
+```
+
+### Module Development Patterns
+
+#### 1. Standard Module Structure
+
+All new modules follow this pattern:
+
+```nix
+# modules/platform/detection.nix
+{ lib, pkgs, config, ... }:
+
+{
+  # Option definitions with proper types and descriptions
+  options.platform = {
+    type = lib.mkOption {
+      type = lib.types.enum [ "nixos" "darwin" "droid" ];
+      description = "The platform type this configuration is running on";
+      default = /* auto-detection logic */;
+    };
+    
+    capabilities = {
+      isLinux = lib.mkOption {
+        type = lib.types.bool;
+        description = "Whether this platform is Linux-based";
+        readOnly = true;  # Computed options are readOnly
+        default = config.platform.type == "nixos" || config.platform.type == "droid";
+      };
+    };
+  };
+
+  config = {
+    # Assertions for validation
+    assertions = [
+      {
+        assertion = config.platform.type != null;
+        message = "Platform type must be detected or manually specified";
+      }
+    ];
+
+    # Conditional configuration based on platform capabilities
+    environment.systemPackages = lib.optionals config.platform.capabilities.supportsNixOS [
+      (pkgs.writeShellScriptBin "show-platform" ''
+        echo "Platform: ${config.platform.type}"
+      '')
+    ];
+  };
+}
+```
+
+#### 2. Service Abstraction Pattern
+
+Services provide platform-agnostic interfaces:
+
+```nix
+# modules/services/audio/interface.nix
+{ lib, config, ... }:
+
+{
+  options.services.audio = {
+    enable = lib.mkOption {
+      type = lib.types.bool;
+      description = "Enable audio services";
+      default = config.device.capabilities.hasAudio;  # Capability-driven defaults
+    };
+
+    backend = lib.mkOption {
+      type = lib.types.enum [ "pipewire" "pulseaudio" "coreaudio" "auto" ];
+      description = "Audio backend to use";
+      default = "auto";
+    };
+
+    # Internal implementation details
+    _implementation = lib.mkOption {
+      type = lib.types.attrs;
+      description = "Platform-specific audio implementation";
+      internal = true;
+      default = {};
+    };
+  };
+
+  config = lib.mkIf config.services.audio.enable {
+    # Capability assertions
+    assertions = [
+      {
+        assertion = config.device.capabilities.hasAudio;
+        message = "Audio service requires audio capability";
+      }
+    ];
+
+    # Auto-select backend based on platform
+    services.audio.backend = lib.mkDefault (
+      if config.services.audio.backend == "auto" then
+        if config.platform.capabilities.isDarwin then "coreaudio"
+        else "pipewire"
+      else config.services.audio.backend
+    );
+  };
+}
+```
+
+#### 3. Platform-Specific Implementation Pattern
+
+```nix
+# modules/services/audio/nixos.nix
+{ lib, config, pkgs, ... }:
+
+let
+  audioConfig = config.services.audio;
+  
+  # Quality presets organized by backend
+  qualitySettings = {
+    pipewire = {
+      standard = { sampleRate = 48000; bufferSize = 512; };
+      high = { sampleRate = 96000; bufferSize = 256; };
+    };
+  };
+
+in {
+  config = lib.mkIf (
+    config.services.audio.enable && 
+    config.platform.capabilities.supportsNixOS
+  ) {
+    
+    # Conditional service configuration
+    services.pipewire = lib.mkIf (audioConfig.backend == "pipewire") {
+      enable = true;
+      alsa.enable = true;
+      pulse.enable = true;
+      
+      # Dynamic configuration based on quality settings
+      extraConfig.pipewire = {
+        "99-zyx-audio" = {
+          context.properties = qualitySettings.pipewire.${audioConfig.quality};
+        };
+      };
+    };
+
+    # Store implementation metadata for introspection
+    services.audio._implementation = {
+      platform = "nixos";
+      backend = audioConfig.backend;
+      pipewireEnabled = config.services.pipewire.enable;
+    };
+  };
+}
+```
+
+### Testing Framework Patterns
+
+#### 1. Test Utilities (tests/lib/test-utils.nix)
+
+```nix
+{ lib, pkgs ? import <nixpkgs> {} }:
+
+let
+  # Core module evaluation function
+  evalConfig = modules: lib.evalModules {
+    modules = modules ++ [
+      { _module.check = false; }  # Disable module checking for testing
+    ];
+    specialArgs = { inherit pkgs; };
+  };
+
+in {
+  inherit evalConfig;
+
+  # Test assertion failures
+  assertionShouldFail = modules: 
+    let result = builtins.tryEval (evalConfig modules).config;
+    in !result.success;
+
+  # Create mock hardware configurations
+  mkMockHardware = { hasAudio ? false, hasGPU ? false, deviceType ? "vm" }: {
+    device = {
+      type = deviceType;
+      capabilities = { inherit hasAudio hasGPU; };
+    };
+  };
+}
+```
+
+#### 2. Unit Test Structure
+
+```nix
+# tests/unit/platform/detection-test.nix
+{ lib, pkgs }:
+
+let
+  testUtils = import ../../lib/test-utils.nix { inherit lib pkgs; };
+  platformModule = ../../../modules/platform/detection.nix;
+  testConfig = modules: (testUtils.evalConfig modules).config;
+
+in {
+  name = "platform-detection";
+  tests = [
+    {
+      name = "platform-type-defaults-to-nixos-on-linux";
+      expr = (testConfig [ platformModule ]).platform.type;
+      expected = "nixos";
+    }
+
+    {
+      name = "invalid-platform-type-fails";
+      expr = testUtils.assertionShouldFail [
+        platformModule
+        { platform.type = "invalid"; }
+      ];
+      expected = true;
+    }
+  ];
+}
+```
+
+#### 3. Test Integration with Flake
+
+```nix
+# flake.nix
+{
+  outputs = inputs:
+    inputs.flake-parts.lib.mkFlake {inherit inputs;} {
+      perSystem = { config, self', inputs', pkgs, system, ... }: {
+        checks = {
+          tests = (import ./tests { 
+            inherit (pkgs) lib;
+            inherit pkgs; 
+          }).check;
+        };
+      };
+    };
+}
+```
+
+```nix
+# tests/default.nix
+{ lib, pkgs }:
+
+let
+  testUtils = import ./lib/test-utils.nix { inherit lib pkgs; };
+  
+  runBasicTests = {
+    platformDetection = (testUtils.evalConfig [ 
+      ../modules/platform/detection.nix 
+    ]).config.platform.type == "nixos";
+  };
+
+  allTestsPassed = lib.all (x: x) (lib.attrValues runBasicTests);
+
+in {
+  results = runBasicTests;
+  check = 
+    if allTestsPassed
+    then pkgs.writeText "test-success" "All basic tests passed"
+    else throw "Basic tests failed: ${builtins.toJSON runBasicTests}";
+}
+```
+
+### Development Workflow
+
+#### 1. Creating a New Module
+
+```bash
+# 1. Create the module file
+touch modules/services/display/interface.nix
+
+# 2. Implement using established patterns (see examples above)
+
+# 3. Create corresponding test file
+touch tests/unit/services/display-test.nix
+
+# 4. Add tests to test runner
+# Edit tests/default.nix to include new tests
+
+# 5. Test your changes
+nix flake check
+
+# 6. Commit with descriptive message
+git add -A
+git commit -m "feat(services): add display service abstraction
+
+- Implement display service interface with platform detection
+- Add support for X11 and Wayland backends  
+- Include comprehensive unit tests
+- All tests passing
+
+🤖 Generated with [Claude Code](https://claude.ai/code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>"
+```
+
+#### 2. Running Tests
+
+```bash
+# Run all tests via flake
+nix flake check
+
+# Test specific modules directly
+nix eval --impure --expr '
+let 
+  pkgs = import <nixpkgs> {};
+  lib = pkgs.lib;
+  testUtils = import ./tests/lib/test-utils.nix { inherit lib pkgs; };
+  result = (testUtils.evalConfig [ 
+    ./modules/platform/detection.nix 
+  ]).config.platform.type;
+in result
+'
+
+# Check test results without building
+nix eval --impure --expr '(import ./tests { 
+  pkgs = import <nixpkgs> {}; 
+  lib = (import <nixpkgs> {}).lib; 
+}).results'
+```
+
+#### 3. Debugging Module Issues
+
+```bash
+# Show platform capabilities for debugging
+nix eval --impure --expr '
+let 
+  config = (import ./tests/lib/test-utils.nix { 
+    pkgs = import <nixpkgs> {}; 
+    lib = (import <nixpkgs> {}).lib; 
+  }).evalConfig [ 
+    ./modules/platform/detection.nix
+    ./modules/platform/capabilities.nix
+    { device.type = "laptop"; }
+  ];
+in {
+  platform = config.config.platform.type;
+  hasAudio = config.config.device.capabilities.hasAudio;
+  isWorkstation = config.config.device.profiles.isWorkstation;
+}
+'
+```
+
+### Integration Patterns
+
+#### 1. Module Import Pattern
+
+```nix
+# Modules use relative imports for clarity
+platformModule = ../../../modules/platform/detection.nix;
+
+# Tests use consistent relative paths from test directory
+testUtils = import ../../lib/test-utils.nix { inherit lib pkgs; };
+```
+
+#### 2. Capability-Driven Configuration
+
+```nix
+# Services enable based on capabilities
+services.audio.enable = lib.mkDefault config.device.capabilities.hasAudio;
+
+# Platform-specific implementations check platform capabilities
+config = lib.mkIf (
+  config.services.audio.enable && 
+  config.platform.capabilities.supportsNixOS
+) {
+  # NixOS-specific configuration
+};
+```
+
+#### 3. Error Handling and Validation
+
+```nix
+# Use assertions for capability dependencies
+assertions = [
+  {
+    assertion = 
+      config.device.capabilities.hasWayland -> 
+      (config.device.capabilities.hasGUI && config.device.capabilities.hasGPU);
+    message = "Wayland requires both GUI and GPU capabilities";
+  }
+];
+
+# Provide helpful debug information
+environment.systemPackages = lib.optionals config.platform.capabilities.supportsNixOS [
+  (pkgs.writeShellScriptBin "show-capabilities" ''
+    echo "Device Type: ${config.device.type}"
+    echo "Audio: ${lib.boolToString config.device.capabilities.hasAudio}"
+    echo "GPU: ${lib.boolToString config.device.capabilities.hasGPU}"
+  '')
+];
+```
+
+### Common Issues and Solutions
+
+#### 1. Module Evaluation Errors
+
+**Problem**: `error: infinite recursion encountered`
+**Solution**: Check for circular dependencies in option defaults. Use `lib.mkDefault` instead of direct assignment.
+
+**Problem**: `error: attribute 'platform' missing`
+**Solution**: Ensure platform detection module is imported before dependent modules.
+
+#### 2. Test Failures
+
+**Problem**: Tests fail with "assertion failed"
+**Solution**: Check that capability dependencies are satisfied in test configurations.
+
+**Problem**: `error: getting status of '/nix/store/.../tests': No such file or directory`
+**Solution**: Ensure all test files are committed to git before running `nix flake check`.
+
+#### 3. Performance Issues
+
+**Problem**: Module evaluation takes too long
+**Solution**: Use `lib.mkIf` to conditionally evaluate expensive options. Avoid complex computations in option defaults.
+
+### Legacy Integration Notes
+
+The new architecture coexists with the existing system:
+
+- **New modules** go in `modules/platform/` and `modules/services/`
+- **Legacy modules** remain in `modules/options/`, `modules/system/`, `modules/home/`
+- **Migration strategy** involves gradually moving functionality from legacy modules to new abstractions
+- **Testing ensures** no functionality is lost during migration
+
+This reference provides the technical details needed to immediately continue development following established patterns and practices.
+
 ## Current Status
 
 ### ✅ Completed (Phase 1 Foundation)
