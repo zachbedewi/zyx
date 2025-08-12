@@ -284,13 +284,13 @@ in {
     );
 
     # Fail2ban Integration for SSH monitoring
-    services.fail2ban = lib.mkIf (sshConfig.monitoring.enable && config.services.security.monitoring.enable) {
+    services.fail2ban = lib.mkIf (sshConfig.monitoring.enable && config.services.security.monitoring.enable or false) {
       enable = true;
       jails = mkFail2banSSHJail;
     };
 
     # SSH Audit Logging
-    security.auditd.rules = lib.mkIf (sshConfig.monitoring.enable && config.services.security.monitoring.enable) [
+    security.auditd.rules = lib.mkIf (sshConfig.monitoring.enable && config.services.security.monitoring.enable or false) [
       # Monitor SSH logins
       "-w /var/log/auth.log -p wa -k ssh-auth"
       "-w /var/log/secure -p wa -k ssh-auth"
@@ -319,7 +319,7 @@ in {
       hardeningLevel = sshConfig.server.hardening.level;
       keyTypes = sshConfig.keys.keyTypes;
       profileCount = lib.length (lib.attrNames sshConfig.client.profiles);
-      fail2banEnabled = sshConfig.monitoring.enable && config.services.security.monitoring.enable;
+      fail2banEnabled = sshConfig.monitoring.enable && config.services.security.monitoring.enable or false;
     };
   };
 }

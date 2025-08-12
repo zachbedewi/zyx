@@ -301,7 +301,7 @@
       enable = lib.mkOption {
         type = lib.types.bool;
         description = "Enable SSH connection monitoring";
-        default = config.services.ssh.server.enable && config.services.security.monitoring.enable;
+        default = false;
       };
 
       logLevel = lib.mkOption {
@@ -373,11 +373,11 @@
       }
     ];
 
-    # Auto-configure hardening level based on security service
+    # Auto-configure hardening level based on security service (if available)
     services.ssh.server.hardening.level = lib.mkDefault (
-      if config.services.security.hardening.level == "minimal" then "standard"
-      else if config.services.security.hardening.level == "standard" then "standard"
-      else if config.services.security.hardening.level == "high" then "high"
+      if config.services.security.hardening.level or "standard" == "minimal" then "standard"
+      else if config.services.security.hardening.level or "standard" == "standard" then "standard"
+      else if config.services.security.hardening.level or "standard" == "high" then "high"
       else "paranoid"
     );
 
@@ -388,10 +388,10 @@
       else [ "ed25519" "rsa" "ecdsa" ]
     );
 
-    # Auto-configure monitoring based on security monitoring
+    # Auto-configure monitoring based on security monitoring (if available)
     services.ssh.monitoring.enable = lib.mkDefault (
       config.services.ssh.server.enable && 
-      config.services.security.monitoring.enable
+      config.services.security.monitoring.enable or false
     );
   };
 }
