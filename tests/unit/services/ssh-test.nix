@@ -271,14 +271,14 @@ in {
     }
 
     {
-      name = "ssh-keys-default-type-ed25519";
+      name = "ssh-keys-default-types-with-standard-hardening";
       expr = (testConfig [ 
         sshInterface 
         platformDetection 
         platformCapabilities 
         baseConfig 
       ]).services.ssh.keys.keyTypes;
-      expected = [ "ed25519" ];
+      expected = [ "ed25519" "rsa" "ecdsa" ];
     }
 
     {
@@ -616,7 +616,7 @@ in {
         platformCapabilities 
         baseConfig 
       ]).services.ssh._implementation.keyTypes;
-      expected = [ "ed25519" ];
+      expected = [ "ed25519" "rsa" "ecdsa" ];
     }
 
     # SSH Profile Tests
