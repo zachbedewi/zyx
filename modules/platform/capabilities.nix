@@ -73,6 +73,33 @@
         description = "Whether this device is mobile (battery-powered)";
         default = config.device.type == "laptop";
       };
+
+      # Display-specific capabilities
+      hasMultiMonitor = lib.mkOption {
+        type = lib.types.bool;
+        description = "Whether this device supports multiple monitors";
+        default = config.device.type == "desktop" || config.device.type == "laptop";
+      };
+
+      hasHiDPI = lib.mkOption {
+        type = lib.types.bool;
+        description = "Whether this device has high-DPI display capabilities";
+        default = config.device.type == "laptop";  # Modern laptops often have HiDPI displays
+      };
+
+      hasHighRefreshRate = lib.mkOption {
+        type = lib.types.bool;
+        description = "Whether this device supports high refresh rate displays";
+        default = config.device.type == "desktop";  # Gaming/workstation desktops
+      };
+
+      supportsVR = lib.mkOption {
+        type = lib.types.bool;
+        description = "Whether this device supports VR/AR capabilities";
+        default = 
+          config.device.type == "desktop" && 
+          config.device.capabilities.hasGPU;
+      };
     };
 
     # Derived capability combinations for convenience
@@ -111,6 +138,17 @@
           config.device.capabilities.hasGUI &&
           config.device.capabilities.hasAudio &&
           config.device.capabilities.hasGPU;
+      };
+
+      isGaming = lib.mkOption {
+        type = lib.types.bool;
+        description = "Whether this device is suitable for gaming";
+        readOnly = true;
+        default = 
+          config.device.capabilities.hasGUI &&
+          config.device.capabilities.hasGPU &&
+          config.device.capabilities.hasAudio &&
+          (config.device.type == "desktop" || config.device.type == "laptop");
       };
     };
   };
@@ -160,12 +198,17 @@
         echo "Network: ${lib.boolToString config.device.capabilities.hasNetwork}"
         echo "Bluetooth: ${lib.boolToString config.device.capabilities.hasBluetooth}"
         echo "WiFi: ${lib.boolToString config.device.capabilities.hasWifi}"
+        echo "Multi-Monitor: ${lib.boolToString config.device.capabilities.hasMultiMonitor}"
+        echo "HiDPI: ${lib.boolToString config.device.capabilities.hasHiDPI}"
+        echo "High Refresh: ${lib.boolToString config.device.capabilities.hasHighRefreshRate}"
+        echo "VR Support: ${lib.boolToString config.device.capabilities.supportsVR}"
         echo ""
         echo "Profiles:"
         echo "  Headless: ${lib.boolToString config.device.profiles.isHeadless}"
         echo "  Workstation: ${lib.boolToString config.device.profiles.isWorkstation}"
         echo "  Development: ${lib.boolToString config.device.profiles.isDevelopmentMachine}"
         echo "  Media Center: ${lib.boolToString config.device.profiles.isMediaCenter}"
+        echo "  Gaming: ${lib.boolToString config.device.profiles.isGaming}"
       '')
     ];
   };

@@ -6,6 +6,7 @@ let
   
   # Import unit test modules
   audioTests = import ./unit/services/audio-test.nix { inherit lib pkgs; };
+  displayTests = import ./unit/services/display-test.nix { inherit lib pkgs; };
   
   # Run unit tests
   runUnitTests = testName: tests:
@@ -44,7 +45,9 @@ let
   };
 
   # Run all unit tests
-  allUnitTests = runUnitTests "audio" audioTests.tests;
+  audioUnitTests = runUnitTests "audio" audioTests.tests;
+  displayUnitTests = runUnitTests "display" displayTests.tests;
+  allUnitTests = audioUnitTests // displayUnitTests;
   
   # Combine all test results
   allTests = runBasicTests // allUnitTests;
@@ -58,7 +61,8 @@ in {
   
   # Detailed results by category
   basicResults = runBasicTests;
-  audioResults = allUnitTests;
+  audioResults = audioUnitTests;
+  displayResults = displayUnitTests;
   
   # Check function for flake integration
   check = 
