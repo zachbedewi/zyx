@@ -151,6 +151,21 @@
           config.platform.capabilities.isLinux ||
           config.platform.capabilities.isDarwin;
       };
+
+      hasMemoryProtection = lib.mkOption {
+        type = lib.types.bool;
+        description = "Whether this device supports memory protection features";
+        default = config.device.type != "vm";  # Physical devices typically have memory protection
+      };
+
+      hasHardwareKeyStorage = lib.mkOption {
+        type = lib.types.bool;
+        description = "Whether this device has dedicated hardware key storage";
+        default = 
+          config.device.capabilities.hasTPM ||
+          config.device.type == "laptop" ||
+          config.device.type == "desktop";
+      };
     };
 
     # Derived capability combinations for convenience
@@ -304,6 +319,8 @@
         echo "  ZFS: ${lib.boolToString config.device.capabilities.supportsZFS}"
         echo "  Hardware RNG: ${lib.boolToString config.device.capabilities.hasHardwareRNG}"
         echo "  Containerization: ${lib.boolToString config.device.capabilities.supportsContainerization}"
+        echo "  Memory Protection: ${lib.boolToString config.device.capabilities.hasMemoryProtection}"
+        echo "  Hardware Key Storage: ${lib.boolToString config.device.capabilities.hasHardwareKeyStorage}"
         echo ""
         echo "Profiles:"
         echo "  Headless: ${lib.boolToString config.device.profiles.isHeadless}"
