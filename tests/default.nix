@@ -8,6 +8,7 @@ let
   audioTests = import ./unit/services/audio-test.nix { inherit lib pkgs; };
   displayTests = import ./unit/services/display-test.nix { inherit lib pkgs; };
   networkingTests = import ./unit/services/networking-test.nix { inherit lib pkgs; };
+  securityTests = import ./unit/services/security-test.nix { inherit lib pkgs; };
   
   # Run unit tests
   runUnitTests = testName: tests:
@@ -49,7 +50,8 @@ let
   audioUnitTests = runUnitTests "audio" audioTests.tests;
   displayUnitTests = runUnitTests "display" displayTests.tests;
   networkingUnitTests = runUnitTests "networking" networkingTests.tests;
-  allUnitTests = audioUnitTests // displayUnitTests // networkingUnitTests;
+  securityUnitTests = runUnitTests "security" securityTests.tests;
+  allUnitTests = audioUnitTests // displayUnitTests // networkingUnitTests // securityUnitTests;
   
   # Combine all test results
   allTests = runBasicTests // allUnitTests;
@@ -66,6 +68,7 @@ in {
   audioResults = audioUnitTests;
   displayResults = displayUnitTests;
   networkingResults = networkingUnitTests;
+  securityResults = securityUnitTests;
   
   # Check function for flake integration
   check = 

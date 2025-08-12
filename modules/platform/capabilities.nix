@@ -100,6 +100,57 @@
           config.device.type == "desktop" && 
           config.device.capabilities.hasGPU;
       };
+
+      # Security-specific capabilities
+      hasEncryption = lib.mkOption {
+        type = lib.types.bool;
+        description = "Whether this device supports hardware encryption";
+        default = true;  # Most modern devices support disk encryption
+      };
+
+      hasSecureBoot = lib.mkOption {
+        type = lib.types.bool;
+        description = "Whether this device supports UEFI Secure Boot";
+        default = config.device.type != "vm";  # VMs typically don't have secure boot
+      };
+
+      hasTPM = lib.mkOption {
+        type = lib.types.bool;
+        description = "Whether this device has a Trusted Platform Module";
+        default = 
+          config.device.type == "laptop" || 
+          config.device.type == "desktop";  # Modern laptops/desktops often have TPM
+      };
+
+      hasSELinux = lib.mkOption {
+        type = lib.types.bool;
+        description = "Whether this device supports SELinux";
+        default = 
+          config.platform.capabilities.isLinux && 
+          config.device.type != "vm";  # VM might not support SELinux properly
+      };
+
+      supportsZFS = lib.mkOption {
+        type = lib.types.bool;
+        description = "Whether this device supports ZFS filesystem";
+        default = 
+          config.platform.capabilities.isLinux ||
+          config.platform.capabilities.isDarwin;  # ZFS available on Linux and macOS
+      };
+
+      hasHardwareRNG = lib.mkOption {
+        type = lib.types.bool;
+        description = "Whether this device has hardware random number generation";
+        default = config.device.type != "vm";  # Physical devices typically have HWRNG
+      };
+
+      supportsContainerization = lib.mkOption {
+        type = lib.types.bool;
+        description = "Whether this device supports secure containerization";
+        default = 
+          config.platform.capabilities.isLinux ||
+          config.platform.capabilities.isDarwin;
+      };
     };
 
     # Derived capability combinations for convenience
@@ -157,6 +208,41 @@
           config.device.capabilities.hasAudio &&
           (config.device.type == "desktop" || config.device.type == "laptop");
       };
+
+      # Security-specific profiles
+      isServer = lib.mkOption {
+        type = lib.types.bool;
+        description = "Whether this device is a server requiring high security";
+        readOnly = true;
+        default = config.device.type == "server";
+      };
+
+      requiresHighSecurity = lib.mkOption {
+        type = lib.types.bool;
+        description = "Whether this device requires high security hardening";
+        readOnly = true;
+        default = 
+          config.device.profiles.isServer ||
+          config.device.profiles.isWorkstation;
+      };
+
+      supportsFullEncryption = lib.mkOption {
+        type = lib.types.bool;
+        description = "Whether this device supports full disk encryption with TPM";
+        readOnly = true;
+        default = 
+          config.device.capabilities.hasEncryption &&
+          config.device.capabilities.hasTPM;
+      };
+
+      canUseSecureBoot = lib.mkOption {
+        type = lib.types.bool;
+        description = "Whether this device can utilize secure boot effectively";
+        readOnly = true;
+        default = 
+          config.device.capabilities.hasSecureBoot &&
+          config.device.type != "vm";
+      };
     };
   };
 
@@ -210,12 +296,25 @@
         echo "High Refresh: ${lib.boolToString config.device.capabilities.hasHighRefreshRate}"
         echo "VR Support: ${lib.boolToString config.device.capabilities.supportsVR}"
         echo ""
+        echo "Security Capabilities:"
+        echo "  Encryption: ${lib.boolToString config.device.capabilities.hasEncryption}"
+        echo "  Secure Boot: ${lib.boolToString config.device.capabilities.hasSecureBoot}"
+        echo "  TPM: ${lib.boolToString config.device.capabilities.hasTPM}"
+        echo "  SELinux: ${lib.boolToString config.device.capabilities.hasSELinux}"
+        echo "  ZFS: ${lib.boolToString config.device.capabilities.supportsZFS}"
+        echo "  Hardware RNG: ${lib.boolToString config.device.capabilities.hasHardwareRNG}"
+        echo "  Containerization: ${lib.boolToString config.device.capabilities.supportsContainerization}"
+        echo ""
         echo "Profiles:"
         echo "  Headless: ${lib.boolToString config.device.profiles.isHeadless}"
         echo "  Workstation: ${lib.boolToString config.device.profiles.isWorkstation}"
         echo "  Development: ${lib.boolToString config.device.profiles.isDevelopmentMachine}"
         echo "  Media Center: ${lib.boolToString config.device.profiles.isMediaCenter}"
         echo "  Gaming: ${lib.boolToString config.device.profiles.isGaming}"
+        echo "  Server: ${lib.boolToString config.device.profiles.isServer}"
+        echo "  High Security: ${lib.boolToString config.device.profiles.requiresHighSecurity}"
+        echo "  Full Encryption: ${lib.boolToString config.device.profiles.supportsFullEncryption}"
+        echo "  Secure Boot Ready: ${lib.boolToString config.device.profiles.canUseSecureBoot}"
       '')
     ];
   };
