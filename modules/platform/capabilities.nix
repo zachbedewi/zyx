@@ -50,9 +50,9 @@
           config.device.capabilities.hasGPU;
       };
 
-      hasNetwork = lib.mkOption {
+      hasNetworking = lib.mkOption {
         type = lib.types.bool;
-        description = "Whether this device has network capabilities";
+        description = "Whether this device has networking capabilities";
         default = true;  # Assume all devices have network
       };
 
@@ -62,7 +62,7 @@
         default = config.device.type == "laptop";  # Laptops typically have Bluetooth
       };
 
-      hasWifi = lib.mkOption {
+      hasWiFi = lib.mkOption {
         type = lib.types.bool;
         description = "Whether this device has WiFi capabilities";
         default = config.device.type == "laptop";  # Laptops typically have WiFi
@@ -127,7 +127,14 @@
         readOnly = true;
         default = 
           config.device.capabilities.hasGUI &&
-          config.device.capabilities.hasNetwork;
+          config.device.capabilities.hasNetworking;
+      };
+
+      isDevelopment = lib.mkOption {
+        type = lib.types.bool;
+        description = "Alias for isDevelopmentMachine";
+        readOnly = true;
+        default = config.device.profiles.isDevelopmentMachine;
       };
 
       isMediaCenter = lib.mkOption {
@@ -195,9 +202,9 @@
         echo "GUI: ${lib.boolToString config.device.capabilities.hasGUI}"
         echo "Wayland: ${lib.boolToString config.device.capabilities.hasWayland}"
         echo "Compositing: ${lib.boolToString config.device.capabilities.supportsCompositing}"
-        echo "Network: ${lib.boolToString config.device.capabilities.hasNetwork}"
+        echo "Network: ${lib.boolToString config.device.capabilities.hasNetworking}"
         echo "Bluetooth: ${lib.boolToString config.device.capabilities.hasBluetooth}"
-        echo "WiFi: ${lib.boolToString config.device.capabilities.hasWifi}"
+        echo "WiFi: ${lib.boolToString config.device.capabilities.hasWiFi}"
         echo "Multi-Monitor: ${lib.boolToString config.device.capabilities.hasMultiMonitor}"
         echo "HiDPI: ${lib.boolToString config.device.capabilities.hasHiDPI}"
         echo "High Refresh: ${lib.boolToString config.device.capabilities.hasHighRefreshRate}"
