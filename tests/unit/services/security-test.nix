@@ -175,14 +175,14 @@ in {
     }
 
     {
-      name = "access-control-backend-defaults-to-auto";
+      name = "access-control-backend-auto-selects-selinux";
       expr = (testConfig [ 
         securityInterface 
         platformDetection 
         platformCapabilities 
         baseConfig 
       ]).services.security.accessControl.backend;
-      expected = "auto";
+      expected = "selinux";
     }
 
     {
@@ -255,14 +255,14 @@ in {
     }
 
     {
-      name = "intrusion-detection-backend-defaults-to-auto";
+      name = "intrusion-detection-backend-auto-selects-aide";
       expr = (testConfig [ 
         securityInterface 
         platformDetection 
         platformCapabilities 
         baseConfig 
       ]).services.security.monitoring.intrusion.backend;
-      expected = "auto";
+      expected = "aide";
     }
 
     # Encryption tests

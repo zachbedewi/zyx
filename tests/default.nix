@@ -9,6 +9,7 @@ let
   displayTests = import ./unit/services/display-test.nix { inherit lib pkgs; };
   networkingTests = import ./unit/services/networking-test.nix { inherit lib pkgs; };
   securityTests = import ./unit/services/security-test.nix { inherit lib pkgs; };
+  sshTests = import ./unit/services/ssh-test.nix { inherit lib pkgs; };
   
   # Run unit tests
   runUnitTests = testName: tests:
@@ -51,7 +52,8 @@ let
   displayUnitTests = runUnitTests "display" displayTests.tests;
   networkingUnitTests = runUnitTests "networking" networkingTests.tests;
   securityUnitTests = runUnitTests "security" securityTests.tests;
-  allUnitTests = audioUnitTests // displayUnitTests // networkingUnitTests // securityUnitTests;
+  sshUnitTests = runUnitTests "ssh" sshTests.tests;
+  allUnitTests = audioUnitTests // displayUnitTests // networkingUnitTests // securityUnitTests // sshUnitTests;
   
   # Combine all test results
   allTests = runBasicTests // allUnitTests;
@@ -69,6 +71,7 @@ in {
   displayResults = displayUnitTests;
   networkingResults = networkingUnitTests;
   securityResults = securityUnitTests;
+  sshResults = sshUnitTests;
   
   # Check function for flake integration
   check = 
