@@ -20,6 +20,7 @@
 
 ;; Keybindings
 (require 'xeromacs-evil)
+(require 'xeromacs-keybinds)
 
 ;; Core Features
 (require 'xeromacs-completion)

@@ -78,6 +78,12 @@
       deadnix
       claude-code
       nil
+      gcc
+      libsForQt5.kdenlive
+      ripgrep
+      coreutils
+      fd
+      clang
     ];
 
     stylix = {
