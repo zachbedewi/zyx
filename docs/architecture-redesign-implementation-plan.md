@@ -552,9 +552,13 @@ This reference provides the technical details needed to immediately continue dev
 - **Network Intelligence**: Automatic backend selection and optimization per device type
 
 ### 🔄 In Progress
-- Phase 3.1: Dynamic Module Loading
+- Phase 2.4: Security Service Abstraction
 
 ### ⏳ Planned
+- Phase 2.5: SSH Service Abstraction
+- Phase 2.6: Secrets Management Service  
+- Phase 2.7: User Home Configuration Service
+- Phase 3.1: Dynamic Module Loading
 - Module discovery and loading system
 - Configuration profiles and feature flags
 - Integration with existing eye-of-god configuration
@@ -735,6 +739,162 @@ This reference provides the technical details needed to immediately continue dev
 
 **Time Estimate**: 2-3 days ✅ COMPLETED IN 1 DAY
 **Dependencies**: Service abstraction foundation, device capabilities
+
+### Milestone 2.4: Security Service Abstraction
+**Goal**: Comprehensive security framework with hardening, access control, and monitoring
+
+#### Tasks:
+- [ ] Create `modules/services/security/interface.nix` with platform-agnostic security API
+- [ ] Implement `modules/services/security/nixos.nix` with comprehensive hardening
+- [ ] Add system hardening capabilities (kernel parameters, filesystem security)
+- [ ] Implement access control systems (SELinux/AppArmor integration)
+- [ ] Add security monitoring and intrusion detection
+- [ ] Create compliance frameworks (CIS, NIST benchmarks)
+- [ ] Implement encryption management (disk encryption, secure boot)
+- [ ] Add security audit and logging capabilities
+- [ ] Create comprehensive security service tests (30+ tests)
+- [ ] Test integration with existing firewall and network services
+
+**Completed Implementation**:
+- ❌ Security service interface with hardening levels (minimal/standard/high/paranoid)
+- ❌ NixOS implementation with SELinux/AppArmor support
+- ❌ System hardening with kernel parameter optimization
+- ❌ Advanced access control with capability-based permissions
+- ❌ Security monitoring with log analysis and intrusion detection
+- ❌ Compliance frameworks with automated benchmark validation
+- ❌ Encryption management with disk and secure boot integration
+- ❌ Enhanced device capabilities with security-specific hardware detection
+- ❌ Comprehensive unit tests covering all security scenarios
+- ❌ Integration with existing networking and firewall services
+
+**Acceptance Criteria**:
+- Security hardening works across different device types and threat models
+- Access control systems integrate seamlessly with user management
+- Security monitoring provides comprehensive visibility and alerting
+- Compliance frameworks validate configuration against security standards
+- Encryption systems protect data at rest and in transit
+- All security tests pass for different hardening levels and configurations
+- Security audit capabilities provide detailed reporting and recommendations
+
+**Time Estimate**: 1-1.5 days
+**Dependencies**: Service abstraction foundation, networking services, device capabilities
+
+### Milestone 2.5: SSH Service Abstraction  
+**Goal**: Complete SSH client/server management with key automation and security
+
+#### Tasks:
+- [ ] Create `modules/services/ssh/interface.nix` with platform-agnostic SSH API
+- [ ] Implement `modules/services/ssh/nixos.nix` with secure server and client configuration
+- [ ] Add SSH server management with hardened default configurations
+- [ ] Implement SSH client configuration with connection profiles
+- [ ] Create automated SSH key management (generation, rotation, deployment)
+- [ ] Add SSH security features (fail2ban integration, audit logging)
+- [ ] Implement SSH convenience features (host aliases, connection multiplexing)
+- [ ] Add SSH agent and key forwarding management
+- [ ] Create comprehensive SSH service tests (25+ tests)
+- [ ] Test integration with secrets management and security services
+
+**Completed Implementation**:
+- ❌ SSH service interface with client/server abstraction
+- ❌ NixOS implementation with hardened SSH daemon configuration
+- ❌ Advanced SSH client management with connection profiles
+- ❌ Automated SSH key management with multiple key type support (ED25519, RSA, ECDSA)
+- ❌ SSH security integration with fail2ban and audit logging
+- ❌ SSH convenience features with host aliases and connection optimization
+- ❌ Enhanced device capabilities with SSH and remote access detection
+- ❌ Comprehensive unit tests covering client/server scenarios
+- ❌ Integration with secrets management for private key storage
+- ❌ Cross-platform SSH configuration with platform-aware defaults
+
+**Acceptance Criteria**:
+- SSH server configurations are secure by default with appropriate hardening
+- SSH client management simplifies connection to multiple hosts
+- SSH key management automates secure key generation and deployment
+- SSH security features integrate with system-wide security monitoring
+- SSH convenience features improve user productivity without compromising security
+- All SSH tests pass for different server/client configurations
+- Integration with secrets management provides secure key storage and retrieval
+
+**Time Estimate**: 1-1.5 days  
+**Dependencies**: Service abstraction foundation, security services, secrets management
+
+### Milestone 2.6: Secrets Management Service
+**Goal**: Secure secret storage and retrieval with multiple backend support
+
+#### Tasks:
+- [ ] Create `modules/services/secrets/interface.nix` with platform-agnostic secrets API
+- [ ] Implement `modules/services/secrets/nixos.nix` with multiple backend support
+- [ ] Add support for multiple encryption backends (SOPS, agenix, age, GnuPG)
+- [ ] Implement secret type management (SSH keys, API tokens, certificates, passwords)
+- [ ] Create access control system for user and service-specific secrets
+- [ ] Add secret automation (provisioning, rotation, lifecycle management)
+- [ ] Implement secure secret storage with encrypted at-rest and in-memory protection
+- [ ] Add secret audit trails and access logging
+- [ ] Create comprehensive secrets service tests (20+ tests)
+- [ ] Test integration with SSH and user services
+
+**Completed Implementation**:
+- ❌ Secrets service interface with multiple backend abstraction
+- ❌ NixOS implementation supporting SOPS, agenix, pass, and vault backends
+- ❌ Advanced secret type management with automated classification
+- ❌ Capability-based access control for user and service secrets
+- ❌ Secret automation with lifecycle management and rotation workflows
+- ❌ Secure storage with encrypted handling and memory protection
+- ❌ Enhanced device capabilities with encryption and security hardware detection
+- ❌ Comprehensive unit tests covering all secret management scenarios
+- ❌ Integration with SSH service for automated key provisioning
+- ❌ Cross-platform secret synchronization and backup capabilities
+
+**Acceptance Criteria**:
+- Secret storage is secure with multiple encryption backend support
+- Access control ensures secrets are only available to authorized users/services
+- Secret automation reduces manual key and credential management overhead
+- Secret audit trails provide comprehensive visibility into access patterns
+- Integration with other services automates secret provisioning workflows
+- All secrets tests pass for different backend and access control configurations
+- Secret rotation and lifecycle management maintains security over time
+
+**Time Estimate**: 1-1.5 days
+**Dependencies**: Service abstraction foundation, security services, platform detection
+
+### Milestone 2.7: User Home Configuration Service
+**Goal**: Advanced user environment management beyond Home Manager integration
+
+#### Tasks:
+- [ ] Create `modules/services/user/interface.nix` with platform-agnostic user management API
+- [ ] Implement `modules/services/user/nixos.nix` with advanced user environment features
+- [ ] Add user profile management with dotfile synchronization
+- [ ] Implement application state management and workspace restoration
+- [ ] Create user-specific security integration (secrets, SSH keys, access control)
+- [ ] Add cross-platform user experience unification
+- [ ] Implement user configuration backup and cloud synchronization
+- [ ] Add user-specific capability detection and service enablement
+- [ ] Create comprehensive user service tests (35+ tests)
+- [ ] Test seamless integration with existing Home Manager setup
+
+**Completed Implementation**:
+- ❌ User service interface with comprehensive profile management
+- ❌ NixOS implementation with advanced user environment features
+- ❌ User profile management with automated dotfile synchronization
+- ❌ Application state management with workspace and session restoration
+- ❌ User security integration with personal secrets and SSH key management
+- ❌ Cross-platform user experience with unified configuration across machines
+- ❌ Enhanced device capabilities with user-specific feature detection
+- ❌ Comprehensive unit tests covering all user management scenarios
+- ❌ Seamless Home Manager integration preserving existing user configurations
+- ❌ User configuration versioning with backup and cloud sync capabilities
+
+**Acceptance Criteria**:
+- User environments are consistent across different machines and platforms
+- User profile management simplifies dotfile and application configuration
+- User security integration provides seamless access to personal secrets and keys
+- Application state management preserves user workflows across sessions
+- Home Manager integration maintains compatibility with existing user setups
+- All user tests pass for different profile and integration scenarios
+- User configuration backup ensures user data is protected and recoverable
+
+**Time Estimate**: 1-1.5 days
+**Dependencies**: Service abstraction foundation, secrets management, SSH services, Home Manager
 
 ---
 
@@ -1355,14 +1515,18 @@ This reference provides the technical details needed to immediately continue dev
 | Phase 2.1 ✅ | 1 day | Complete audio service abstraction |
 | Phase 2.2 ✅ | 1 day | Complete display/graphics service abstraction |
 | Phase 2.3 ✅ | 1 day | Network service abstraction |
+| Phase 2.4 | 1-1.5 days | Security service abstraction |
+| Phase 2.5 | 1-1.5 days | SSH service abstraction |
+| Phase 2.6 | 1-1.5 days | Secrets management service |
+| Phase 2.7 | 1-1.5 days | User home configuration service |
 | Phase 3 | 4-5 days | Module discovery, profiles, feature flags |
 | Phase 4 | 3-4 days | Package management, Home Manager integration |
 | Phase 5 | 4-5 days | Migration, performance optimization |
 | Phase 6 | 6-8 days | Darwin support, advanced testing |
 | Phase 7 | 4-5 days | Documentation, final integration |
 
-**Total Estimated Time**: 27-35 days (5-7 weeks)
-**Progress**: 4 days completed, ~23-31 days remaining
+**Total Estimated Time**: 31-41 days (6-8 weeks)
+**Progress**: 4 days completed, ~27-37 days remaining
 
 ## Getting Started
 
@@ -1374,13 +1538,13 @@ To continue from the current state:
    - Phase 2.2 (Display/Graphics Abstraction) ✅ COMPLETED
    - Phase 2.3 (Network Service Abstraction) ✅ COMPLETED
 2. **Development Environment**: Testing framework is fully operational with 85 tests passing
-3. **Next Milestone**: Begin Phase 3.1 (Dynamic Module Loading)
+3. **Next Milestone**: Begin Phase 2.4 (Security Service Abstraction)
 4. **Reference Implementation**: Use completed service abstractions (audio, display, networking) as patterns
 5. **Follow Development Practices**: Test changes, commit frequently, document progress
 6. **Track Progress**: Update this document as milestones are completed
 
 ### Current Development Focus
-**Phase 3.1: Dynamic Module Loading** - Create automatic module discovery and loading system with dependency resolution following the established architecture patterns.
+**Phase 2.4: Security Service Abstraction** - Create comprehensive security framework with hardening, access control, and monitoring following the established service abstraction patterns.
 
 ## Conclusion
 
