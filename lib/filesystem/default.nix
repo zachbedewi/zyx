@@ -1,5 +1,10 @@
 {inputs, ...}: let
-  inherit (inputs.nixpkgs.lib) genAttrs foldl';
+  inherit
+    (inputs.nixpkgs.lib)
+    genAttrs
+    foldl'
+    filterAttrs
+    ;
 
   getDirectoryNames = path: builtins.attrNames (builtins.readDir path);
 
@@ -32,4 +37,10 @@ in {
     architectures = getDirectoryNames systemsPath;
   in
     foldl' (acc: system: acc // generateConfigurationMetadataForSystem systemsPath system) {} architectures;
+
+  filterNixosConfigurations = systems:
+    filterAttrs (
+      _hostname: {system, ...}: system == "x86_64-linux"
+    )
+    systems;
 }
