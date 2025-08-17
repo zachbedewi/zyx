@@ -1,40 +1,70 @@
-#+TITLE: Zyx
-#+AUTHOR: Zach Bedewi
+#+title: Zyx
 
-* Overview
-The goal of this project is to provide a centralized repository of
-all configurations used in my various computing environments.
+Welcome to Zyx, this is my personal Nix configuration monorepo. It contains configurations for NixOS, Nix-Darwin, Nix-On-Droid and Home Manager.
 
-* General Principles
-To keep the code maintainable, extensible, and clean I am going to be generally
-following these rules:
-- Keep modules self contained, at least as self contained as possible.
-  Basically, I don't want to import a module that causes unintended
-  side effects for another module. By that same token, I don't want one
-  module to break because another hasn't been loaded in yet.
-- Only import downards and one level deep. I don't really like the idea of
-  importing modules two directories up in the directory structure. I know
-  that it is pretty simple to make a file to avoid having the "../.." in the
-  module path, but I'd really prefer to not use that. To me it feels like a code
-  smell and could be fixed through better configuration options; however, I'm
-  still a Nix noob so maybe this is me showing my inexperience.
+* Configuration Architecture
+The goal of this Nix configuration is to remain as modular and extensible as possible. This is achieved by following a layered configuration architecture.
 
-* Host Configurations
-- eye-of-god: Currently this is the configuration being used on my
-  13 inch Framework laptop. This is the only host currently, but I
-  plan to eventually expand the configuration to cover my desktop
-  machine, work laptop (running macOS), and another personal laptop
-  (also running macOS). Once the workstations are finished being set
-  up, I will also add configurations for servers. I have a home server
-  now running QNAP's operating system, but I'd eventually like to
-  switch that over to NixOS as well. I also plan to get a VPS and install
-  NixOS on it using NixOS Anywhere. The Framework is essentially acting
-  as a test environment for implementing the initial version of this flake.
+** Overview
+There are three primary layers to this Nix configuration, each one building a new level of abstraction and answering a different question. They are as follows:
 
-* Project Roadmap
-- Get initial host configuration up and running
-- Set up module system for options used in different configurations
-- Add in secrets
-  - Decide between sops-nix and agenix
-- Add in impermanence
-- Add in disko with LUKS + BTRFS for workstations and ZFS for servers
+1. Profile Layer
+
+   /What can the host do?/
+
+   This layer is responsible for defining the various capabilities of the host platform (the machine that the configuration is being deployed to). Some examples of valid profiles would be
+
+   - ~server~
+   - ~desktop~
+   - ~laptop~
+   - ~virtual-machine~
+
+2. Role Layer
+
+   /What should the host be capable of?/
+
+   This layer is responsible for defining what the machine will be used for. It outlines various use-cases, some examples of valid roles include:
+
+   - ~gaming~
+   - ~development~
+   - ~workstation~
+
+3. Provider Layer
+
+   /How will the the host perform its features?/
+
+   This layer is responsible for concreate implementations of different features and functionality. It contains application or service configurations which the host will use to actually perform any task.
+
+** Directory Structure
+
+*** =lib=
+
+#+begin_src shell
+.
+├── builder
+├── default.nix
+├── filesystem
+└── overlay
+#+end_src
+
+This is the home for all additional library functions used throughout the configuration.
+
+*** =modules=
+
+#+begin_src shell
+.
+├── profiles
+├── providers
+├── roles
+#+end_src
+
+This is where all modules are stored. It is subdivided based on the three different configuration layers described above. Furthermore, the =providers= directory has separate directories for =common=, =nixos=, =darwin=, and =home= related implementations.
+
+*** =systems=
+#+begin_src shell
+.
+└── x86_64-linux
+    └── eye-of-god
+#+end_src
+
+This contains all the system configurations for the various hosts which are deployed by this configuration. They are separated into directories based on the system architecture and then the hostname of the system.
