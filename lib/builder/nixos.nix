@@ -28,6 +28,10 @@ in
       inputs.home-manager.nixosModules.home-manager
       inputs.stylix.nixosModules.stylix
 
+      # Custom modules
+      ../../modules/roles
+      ../../modules/providers/nixos
+
       # Host's configuration module
       path
     ];
