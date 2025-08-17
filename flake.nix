@@ -5,7 +5,7 @@
     inputs.flake-parts.lib.mkFlake {inherit inputs;} {
       debug = true;
       systems = ["x86_64-linux"];
-      imports = [./hosts];
+      imports = [./flake];
     };
 
   inputs = {
@@ -25,8 +25,6 @@
       url = "github:danth/stylix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
 
     minimal-emacs = {
       url = "github:jamescherti/minimal-emacs.d";
