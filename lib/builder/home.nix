@@ -7,7 +7,7 @@
 }: let
   flake = inputs.self or (throw "buildHomeConfiguration requires 'inputs.self' to be passed.");
   common = import ./common.nix {inherit inputs;};
-  extendedLib = common.mkExtendedLib flake inputs.nixpkgs;
+  extendedLib = common.mkExtendedLib flake inputs.nixpkgs-unstable;
 in inputs.home-manager.lib.homeManagerConfiguration {
   pkgs = import inputs.nixpkgs-unstable {
     inherit system;

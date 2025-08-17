@@ -8,5 +8,5 @@ in {
   };
 
   # Expose home-manager library namespaces
-  home-manager = inputs.home-manager.lib;
+  inherit (inputs.home-manager.lib) hm;
 }
