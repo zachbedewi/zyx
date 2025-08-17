@@ -1,10 +1,9 @@
 {
-  config,
   lib,
-  pkgs,
+  username,
   ...
 }: {
-  imports = lib.flatten [
+  imports = [
     ../../../modules/home/xdg
     ../../../modules/home/packages
     ../../../home/starship.nix
@@ -16,8 +15,8 @@
   services.ssh-agent.enable = true;
 
   home = {
-    username = "skitzo";
-    homeDirectory = "/home/skitzo";
+    username = "${username}";
+    homeDirectory = "/home/${username}";
     stateVersion = lib.mkDefault "24.11";
   };
 }
