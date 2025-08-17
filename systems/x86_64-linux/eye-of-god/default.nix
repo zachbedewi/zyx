@@ -22,6 +22,13 @@
   ];
 
   config = {
+
+    zyx = {
+      roles = {
+        common.enable = true;
+      };
+    };
+
     modules = {
       device = {
         type = "laptop";
