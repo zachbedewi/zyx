@@ -3,17 +3,32 @@
   hostname,
   path,
   ...
-}:
-inputs.nixpkgs.lib.nixosSystem {
-  inherit system;
+}: let
+  flake = inputs.self or (throw "buildNixosSystem requires 'inputs.self' to be passed.");
+  common = import ./common.nix {inherit inputs;};
+  extendedLib = common.mkExtendedLib flake inputs.nixpkgs;
+  username = "skitzo";
+in
+  inputs.nixpkgs.lib.nixosSystem {
+    inherit system;
 
-  specialArgs = {
-    inherit inputs hostname;
-  };
+    specialArgs = common.mkSpecialArgs {
+      inherit
+        inputs
+        hostname
+        username
+        extendedLib
+        ;
+    };
 
-  modules = [
-    inputs.home-manager.nixosModules.home-manager
-    inputs.stylix.nixosModules.stylix
-    path
-  ];
-}
+    modules = [
+      {_module.args.lib = extendedLib;}
+
+      # External modules
+      inputs.home-manager.nixosModules.home-manager
+      inputs.stylix.nixosModules.stylix
+
+      # Host's configuration module
+      path
+    ];
+  }
