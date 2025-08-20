@@ -3,10 +3,12 @@ let
   inherit (lib) mkDefault mkIf;
 
   inherit (lib.options)
-    mkEnableOption;
+    mkEnableOption
+    ;
 
   cfg = config.zyx.services.openssh;
-in {
+in
+{
   options.zyx.services.openssh = {
     enable = mkEnableOption "Enable OpenSSH.";
   };
@@ -29,7 +31,7 @@ in {
       ];
 
       openFirewall = true;
-      ports = [30];
+      ports = [ 30 ];
       startWhenNeeded = true;
 
       settings = {

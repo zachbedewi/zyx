@@ -2,13 +2,20 @@
   config,
   lib,
   ...
-}: let
+}:
+let
   inherit (lib.options) mkOption mkEnableOption;
   inherit (lib.types) enum;
-in {
+in
+{
   options.modules.device = {
     type = mkOption {
-      type = enum ["laptop" "desktop" "server" "vm"];
+      type = enum [
+        "laptop"
+        "desktop"
+        "server"
+        "vm"
+      ];
       default = "";
       description = ''
         The type of device that this configuration will be deployed on.

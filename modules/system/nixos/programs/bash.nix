@@ -2,7 +2,8 @@
   pkgs,
   lib,
   ...
-}: {
+}:
+{
   programs.bash = {
     interactiveShellInit = ''
       export HISTFILE="$XDG_STATE_HOME"/bash_history

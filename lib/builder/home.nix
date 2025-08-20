@@ -1,14 +1,17 @@
-{inputs}: {
+{ inputs }:
+{
   system,
   path,
   hostname,
   username,
   ...
-}: let
+}:
+let
   flake = inputs.self or (throw "buildHomeConfiguration requires 'inputs.self' to be passed.");
-  common = import ./common.nix {inherit inputs;};
+  common = import ./common.nix { inherit inputs; };
   extendedLib = common.mkExtendedLib flake inputs.nixpkgs-unstable;
-in inputs.home-manager.lib.homeManagerConfiguration {
+in
+inputs.home-manager.lib.homeManagerConfiguration {
   pkgs = import inputs.nixpkgs-unstable {
     inherit system;
   };
@@ -23,7 +26,7 @@ in inputs.home-manager.lib.homeManagerConfiguration {
   };
 
   modules = [
-    {_module.args.lib = extendedLib;}
+    { _module.args.lib = extendedLib; }
 
     # User/host specific configuration module
     path

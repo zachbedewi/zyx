@@ -1,7 +1,13 @@
-{lib, config, ...}: let
+{
+  lib,
+  config,
+  ...
+}:
+let
   inherit (lib) mkIf;
   cfg = config.modules.services.display;
-in {
+in
+{
   config = mkIf (cfg.enable && cfg.backend == "x11" && cfg.desktopEnvironment == "plasma") {
     # Enable the KDE Plasma Desktop Environment
     services.displayManager.sddm.enable = true;

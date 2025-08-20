@@ -2,9 +2,11 @@
   config,
   lib,
   ...
-}: let
+}:
+let
   inherit (lib.strings) fileContents;
-in {
+in
+{
   imports = [
     ./aliases.nix
     ./plugins.nix
@@ -18,7 +20,9 @@ in {
       enableVteIntegration = true;
       autosuggestion.enable = true;
       syntaxHighlighting.enable = true;
-      sessionVariables = {LC_ALL = "en_US.UTF-8";};
+      sessionVariables = {
+        LC_ALL = "en_US.UTF-8";
+      };
 
       history = {
         # Share history between different zsh sessions

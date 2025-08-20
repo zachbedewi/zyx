@@ -9,7 +9,8 @@
   lib,
   pkgs,
   ...
-}: {
+}:
+{
   imports = lib.flatten [
     #
     # ===== Hardware =====
@@ -86,6 +87,8 @@
       coreutils
       fd
       clang
+      tree
+      nixfmt-rfc-style
     ];
 
     stylix = {
@@ -94,16 +97,16 @@
       base16Scheme = "${pkgs.base16-schemes}/share/themes/catppuccin-mocha.yaml";
     };
 
-    home-manager = {
-      backupFileExtension = "backup";
-      extraSpecialArgs = {
-        inherit inputs pkgs;
-      };
+    #home-manager = {
+    #backupFileExtension = "backup";
+    #extraSpecialArgs = {
+    #inherit inputs pkgs;
+    #};
 
-      users.skitzo.imports = [
-        ../../../home
-      ];
-    };
+    #users.skitzo.imports = [
+    #../../../home
+    #];
+    #};
 
     # https://wiki.nixos.org/wiki/FAQ/When_do_I_update_stateVersion
     system.stateVersion = "23.11";

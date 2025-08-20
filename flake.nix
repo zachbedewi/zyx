@@ -1,11 +1,11 @@
 {
   description = "Zach's Nix configuration monorepo";
 
-  outputs = inputs:
-    inputs.flake-parts.lib.mkFlake {inherit inputs;} {
-      debug = true;
-      systems = ["x86_64-linux"];
-      imports = [./flake];
+  outputs =
+    inputs:
+    inputs.flake-parts.lib.mkFlake { inherit inputs; } {
+      systems = [ "x86_64-linux" ];
+      imports = [ ./flake ];
     };
 
   inputs = {

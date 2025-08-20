@@ -1,5 +1,7 @@
-{config, ...}: let
+{ config, ... }:
+let
   system = config.modules.system;
-in {
+in
+{
   hardware.pulseaudio.enable = system.audio.enable && !config.services.pipewire.enable;
 }

@@ -3,12 +3,20 @@
   config,
   lib,
   ...
-}: let
+}:
+let
   inherit (lib.options) mkOption;
-  inherit (lib.types) bool enum package str nullOr;
+  inherit (lib.types)
+    bool
+    enum
+    package
+    str
+    nullOr
+    ;
 
   cfg = config.modules.user;
-in {
+in
+{
   options.modules.user = {
     primaryUser = mkOption {
       type = str;
@@ -17,7 +25,11 @@ in {
     };
 
     desktop = mkOption {
-      type = enum ["none" "plasma" "hyprland"];
+      type = enum [
+        "none"
+        "plasma"
+        "hyprland"
+      ];
       default = "none";
       description = ''
         The desktop environment/window manager to be used.

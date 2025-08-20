@@ -2,7 +2,8 @@
   config,
   lib,
   ...
-}: {
+}:
+{
   imports = lib.flatten [
     ../modules/home/xdg
     ../modules/home/packages

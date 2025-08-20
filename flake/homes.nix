@@ -1,18 +1,25 @@
-{ self, inputs, lib, ... }:
+{
+  self,
+  inputs,
+  lib,
+  ...
+}:
 let
   inherit (self.lib.filesystem) genAllHomeConfigMetadata;
   inherit (self.lib.builder) buildHomeConfiguration;
   inherit (lib) mapAttrs;
 
   homeConfigurations = genAllHomeConfigMetadata ../homes;
-in {
+in
+{
   imports = [
     inputs.home-manager.flakeModules.home-manager
   ];
 
   flake = {
     homeConfigurations = mapAttrs (
-      name: {
+      name:
+      {
         system,
         path,
         hostname,
@@ -20,7 +27,13 @@ in {
         ...
       }:
       buildHomeConfiguration {
-        inherit inputs system path hostname username;
+        inherit
+          inputs
+          system
+          path
+          hostname
+          username
+          ;
       }
     ) homeConfigurations;
   };

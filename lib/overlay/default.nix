@@ -1,6 +1,9 @@
-{inputs}: _final: _prev: let
-  zyxLib = import ../default.nix {inherit inputs;};
-in {
+{ inputs }:
+_final: _prev:
+let
+  zyxLib = import ../default.nix { inherit inputs; };
+in
+{
   # Expose zyx library namespaces
   zyx = {
     filesystem = zyxLib.flake.lib.filesystem;

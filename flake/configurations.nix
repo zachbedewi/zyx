@@ -3,24 +3,32 @@
   inputs,
   lib,
   ...
-}: let
+}:
+let
   inherit (self.lib.filesystem) genAllSystemConfigMetadata filterNixosConfigurations;
   inherit (self.lib.builder) buildNixosSystem;
   inherit (lib) mapAttrs;
 
   systemConfigurations = genAllSystemConfigMetadata ../systems;
-in {
+in
+{
   flake = {
     nixosConfigurations = mapAttrs (
-      name: {
+      name:
+      {
         system,
         path,
         hostname,
         ...
       }:
-        buildNixosSystem {
-          inherit inputs system path hostname;
-        }
+      buildNixosSystem {
+        inherit
+          inputs
+          system
+          path
+          hostname
+          ;
+      }
     ) (filterNixosConfigurations systemConfigurations);
   };
 }

@@ -1,8 +1,15 @@
-{lib, pkgs, config, ...}: let
+{
+  lib,
+  pkgs,
+  config,
+  ...
+}:
+let
   inherit (lib.options) mkOption mkEnableOption;
   inherit (lib.types) bool;
   inherit (lib) mkDefault;
-in {
+in
+{
   options.modules.device = {
     hasAudio = mkOption {
       type = bool;

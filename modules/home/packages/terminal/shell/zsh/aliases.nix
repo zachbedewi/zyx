@@ -2,9 +2,11 @@
   pkgs,
   lib,
   ...
-}: let
+}:
+let
   inherit (lib) getExe;
-in {
+in
+{
   config = {
     programs.zsh.shellAliases = {
       ls = "${getExe pkgs.eza} --long --all --group-directories-first --header";

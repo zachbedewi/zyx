@@ -4,7 +4,8 @@ let
   inherit (lib.options) mkEnableOption;
 
   cfg = config.zyx.roles.common;
-in {
+in
+{
   options.zyx.roles.common = {
     enable = mkEnableOption "Enable common role.";
   };

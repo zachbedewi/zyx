@@ -3,13 +3,15 @@
   pkgs,
   lib,
   ...
-}: let
+}:
+let
   inherit (lib.modules) mkIf;
 
   inherit (config) modules;
   system = modules.system;
   device = modules.device;
-in {
+in
+{
   imports = [
     ./settings.nix
   ];
@@ -28,8 +30,8 @@ in {
     };
 
     systemd.user.services = {
-      pipewire.wantedBy = ["default.target"];
-      pipewire-pulse.wantedBy = ["default.target"];
+      pipewire.wantedBy = [ "default.target" ];
+      pipewire-pulse.wantedBy = [ "default.target" ];
     };
   };
 }

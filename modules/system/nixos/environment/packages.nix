@@ -2,11 +2,13 @@
   pkgs,
   lib,
   ...
-}: let
+}:
+let
   inherit (lib) mkForce;
-in {
+in
+{
   environment = {
-    defaultPackages = mkForce [];
+    defaultPackages = mkForce [ ];
 
     systemPackages = with pkgs; [
       curl

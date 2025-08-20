@@ -1,7 +1,13 @@
-{lib, config, ...}: let
+{
+  lib,
+  config,
+  ...
+}:
+let
   inherit (lib) mkIf;
   cfg = config.modules.services.display;
-in {
+in
+{
   imports = [
     ./plasma.nix
   ];

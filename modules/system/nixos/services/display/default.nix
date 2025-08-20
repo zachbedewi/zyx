@@ -1,21 +1,34 @@
-{lib, config, pkgs, ...}: let
+{
+  lib,
+  config,
+  pkgs,
+  ...
+}:
+let
   inherit (lib.options) mkOption mkEnableOption;
   inherit (lib.types) enum nullOr;
   inherit (lib) mkIf mkMerge;
 
   cfg = config.modules.services.display;
-in {
+in
+{
   options.modules.services.display = {
     enable = mkEnableOption "display services and desktop environment";
 
     backend = mkOption {
-      type = enum ["x11" "wayland"];
+      type = enum [
+        "x11"
+        "wayland"
+      ];
       default = "x11";
       description = "Display server backend to use (X11 or Wayland)";
     };
 
     desktopEnvironment = mkOption {
-      type = nullOr (enum ["plasma" "hyprland"]);
+      type = nullOr (enum [
+        "plasma"
+        "hyprland"
+      ]);
       default = null;
       description = "Desktop environment to enable. null means no DE will be configured.";
     };

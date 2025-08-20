@@ -2,10 +2,12 @@
   pkgs,
   lib,
   ...
-}: let
+}:
+let
   inherit (lib.modules) mkDefault mkForce;
   inherit (lib.meta) getExe';
-in {
+in
+{
   security = {
     sudo-rs.enable = mkForce false;
 

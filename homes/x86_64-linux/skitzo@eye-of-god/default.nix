@@ -2,7 +2,8 @@
   lib,
   username,
   ...
-}: {
+}:
+{
   imports = [
     ../../../modules/home/xdg
     ../../../modules/home/packages

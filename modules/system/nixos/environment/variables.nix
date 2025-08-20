@@ -1,4 +1,5 @@
-{lib, ...}: let
+{ lib, ... }:
+let
   inherit (lib.strings) concatStringsSep;
   pagerArgs = [
     "--RAW-CONTROL-CHARS"
@@ -7,7 +8,8 @@
     "--no-vbell"
     "--wordwrap"
   ];
-in {
+in
+{
   environment.variables = {
     EDITOR = "nvim";
     VISUAL = "nvim";
@@ -16,11 +18,13 @@ in {
     SYSTEMD_PAGERSECURE = "true";
     PAGER = "less -FR";
     LESS = concatStringsSep " " pagerArgs;
-    SYSTEMD_LESS = concatStringsSep " " (pagerArgs
+    SYSTEMD_LESS = concatStringsSep " " (
+      pagerArgs
       ++ [
         "--quit-if-one-screen"
         "--chop-long-lines"
         "--no-init"
-      ]);
+      ]
+    );
   };
 }

@@ -2,9 +2,10 @@
   config,
   pkgs,
   ...
-}: let
-  browser = ["firefox.desktop"];
-  editor = ["nvim.desktop"];
+}:
+let
+  browser = [ "firefox.desktop" ];
+  editor = [ "nvim.desktop" ];
 
   # For an extensive list of associations, see:
   # https://github.com/iggut/GamiNiX/blob/8070528de419703e13b4d234ef39f05966a7fafb/system/desktop/home-main.nix
@@ -27,7 +28,8 @@
     "application/pdf" = browser;
     "text/html" = browser;
   };
-in {
+in
+{
   xdg = {
     enable = true;
     cacheHome = "${config.home.homeDirectory}/.cache";

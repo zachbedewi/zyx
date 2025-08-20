@@ -1,9 +1,17 @@
-{lib, config, pkgs, inputs, ...}: let
+{
+  lib,
+  config,
+  pkgs,
+  inputs,
+  ...
+}:
+let
   inherit (lib) mkIf mkOption types;
-  
+
   cfg = config.modules.services.display;
   hyprlandCfg = config.modules.services.display.hyprland;
-in {
+in
+{
   options.modules.services.display.hyprland = {
     package = mkOption {
       type = types.package;
@@ -49,9 +57,9 @@ in {
 
     # Essential system packages for Wayland/Hyprland
     environment.systemPackages = with pkgs; [
-      wl-clipboard    # Clipboard utilities (system-wide)
-      grim            # Screenshot utility (system-wide)
-      slurp           # Screen area selection (system-wide)
+      wl-clipboard # Clipboard utilities (system-wide)
+      grim # Screenshot utility (system-wide)
+      slurp # Screen area selection (system-wide)
     ];
   };
 }
