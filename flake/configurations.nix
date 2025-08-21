@@ -5,11 +5,11 @@
   ...
 }:
 let
-  inherit (self.lib.filesystem) genAllSystemConfigMetadata filterNixosConfigurations;
+  inherit (self.lib.filesystem) genAllHostConfigMetadata filterNixosHosts;
   inherit (self.lib.builder) buildNixosSystem;
   inherit (lib) mapAttrs;
 
-  systemConfigurations = genAllSystemConfigMetadata ../systems;
+  systemConfigurations = genAllHostConfigMetadata ../systems;
 in
 {
   flake = {
@@ -29,6 +29,6 @@ in
           hostname
           ;
       }
-    ) (filterNixosConfigurations systemConfigurations);
+    ) (filterNixosHosts systemConfigurations);
   };
 }

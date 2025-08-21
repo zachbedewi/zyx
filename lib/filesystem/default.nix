@@ -70,7 +70,7 @@ in
 {
   inherit getDirectoryNames;
 
-  genAllSystemConfigMetadata =
+  genAllHostConfigMetadata =
     hostsPath:
     let
       architectures = getDirectoryNames hostsPath;
@@ -84,6 +84,9 @@ in
     in
     foldl' (acc: system: acc // genHomeConfigMetadataForSystem homesPath system) { } architectures;
 
-  filterNixosConfigurations =
+  filterNixosHosts =
     systems: filterAttrs (_hostname: { system, ... }: system == "x86_64-linux") systems;
+
+  filterDarwinHosts =
+    systems: filterAttrs (_hostname: { system, ... }: system == "aarch64-darwin" || system == "x86_64-darwin") systems;
 }
