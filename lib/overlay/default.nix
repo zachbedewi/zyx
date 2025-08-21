@@ -11,5 +11,6 @@ in
   };
 
   # Expose home-manager library namespaces
+  # This needs to be under the `hm` namespace in order to work properly
   inherit (inputs.home-manager.lib) hm;
 }
