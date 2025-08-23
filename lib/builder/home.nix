@@ -16,7 +16,7 @@ inputs.home-manager.lib.homeManagerConfiguration {
     inherit system;
   };
 
-  extraSpecialArgs = common.mkSpecialArgs {
+  extraSpecialArgs = common.mkSpecialArgsForHome {
     inherit
       inputs
       hostname

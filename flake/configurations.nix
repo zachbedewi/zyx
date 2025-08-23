@@ -17,16 +17,16 @@ in
       name:
       {
         system,
-        path,
         hostname,
+        path,
         ...
       }:
       buildNixosSystem {
         inherit
           inputs
           system
-          path
           hostname
+          path
           ;
       }
     ) (filterNixosHosts systemConfigurations);

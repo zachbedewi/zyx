@@ -6,21 +6,18 @@
   ...
 }:
 let
-  flake = inputs.self or (throw "buildNixosSystem requires 'inputs.self' to be passed.");
+  flake = inputs.self;
   common = import ./common.nix { inherit inputs; };
-  extendedLib = common.mkExtendedLib flake inputs.nixpkgs;
-  username = "skitzo";
 
-  # Build home configuration modules for this hostname
   inherit (flake.lib.filesystem) genAllHomeConfigMetadata;
-  allHomeConfigs = genAllHomeConfigMetadata (flake + "/homes");
+  inherit (common) mkSpecialArgsForHost mkSpecialArgsForHome mkExtendedLib;
 
-  # Filter home configurations for this specific hostname
-  homeConfigsForHost = builtins.filter (config: config.hostname == hostname) (
-    builtins.attrValues allHomeConfigs
+  extendedLib = mkExtendedLib flake inputs.nixpkgs;
+  homeConfigMetadataForHost = builtins.filter (config: config.hostname == hostname) (
+    builtins.attrValues (genAllHomeConfigMetadata (flake + "/homes"))
   );
+  usernames = builtins.map ({ username, ... }: username) homeConfigMetadataForHost;
 
-  # Function to build a home configuration module
   buildHomeModule =
     {
       system,
@@ -33,10 +30,11 @@ let
       home-manager.users.${username} = {
         imports = [
           { _module.args.lib = extendedLib; }
+
           path
         ];
       };
-      home-manager.extraSpecialArgs = common.mkSpecialArgs {
+      home-manager.extraSpecialArgs = mkSpecialArgsForHome {
         inherit
           inputs
           hostname
@@ -49,11 +47,11 @@ in
 inputs.nixpkgs.lib.nixosSystem {
   inherit system;
 
-  specialArgs = common.mkSpecialArgs {
+  specialArgs = mkSpecialArgsForHost {
     inherit
       inputs
       hostname
-      username
+      usernames
       extendedLib
       ;
   };
@@ -69,8 +67,9 @@ inputs.nixpkgs.lib.nixosSystem {
     ../../modules/roles
     ../../modules/providers/nixos
 
-    # Host's configuration module
+    # This host's configuration module
     path
   ]
-  ++ (builtins.map buildHomeModule homeConfigsForHost);
+  # This host's home configurations
+  ++ (builtins.map buildHomeModule homeConfigMetadataForHost);
 }
