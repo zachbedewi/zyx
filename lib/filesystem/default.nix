@@ -13,7 +13,7 @@ let
     let
       parts = builtins.split delimiter identifier;
       username = builtins.elemAt parts 0;
-      hostname = builtins.elemAt parts 1;
+      hostname = builtins.elemAt parts 2;
     in
     {
       inherit username hostname;
@@ -88,5 +88,8 @@ in
     systems: filterAttrs (_hostname: { system, ... }: system == "x86_64-linux") systems;
 
   filterDarwinHosts =
-    systems: filterAttrs (_hostname: { system, ... }: system == "aarch64-darwin" || system == "x86_64-darwin") systems;
+    systems:
+    filterAttrs (
+      _hostname: { system, ... }: system == "aarch64-darwin" || system == "x86_64-darwin"
+    ) systems;
 }
