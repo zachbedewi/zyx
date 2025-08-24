@@ -1,8 +1,3 @@
-# ========================================
-#
-# Eye Of God - Primary machine
-#
-# ========================================
 {
   config,
   lib,
@@ -10,10 +5,7 @@
   ...
 }:
 {
-  imports = lib.flatten [
-    #
-    # ===== Hardware =====
-    #
+  imports = [
     ./hardware-configuration.nix
 
     ../../../modules/options
@@ -22,7 +14,6 @@
   ];
 
   config = {
-
     zyx = {
       roles = {
         common.enable = true;
@@ -99,18 +90,6 @@
       base16Scheme = "${pkgs.base16-schemes}/share/themes/catppuccin-mocha.yaml";
     };
 
-    #home-manager = {
-    #backupFileExtension = "backup";
-    #extraSpecialArgs = {
-    #inherit inputs pkgs;
-    #};
-
-    #users.skitzo.imports = [
-    #../../../home
-    #];
-    #};
-
-    # https://wiki.nixos.org/wiki/FAQ/When_do_I_update_stateVersion
     system.stateVersion = "23.11";
   };
 }
