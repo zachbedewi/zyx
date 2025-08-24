@@ -8,8 +8,8 @@ let
   inherit (lib.modules) mkIf;
 
   inherit (config) modules;
-  system = modules.system;
-  device = modules.device;
+  inherit (modules) system;
+  inherit (modules) device;
 in
 {
   imports = [

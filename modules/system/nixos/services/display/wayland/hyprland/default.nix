@@ -35,7 +35,7 @@ in
     # Enable Hyprland
     programs.hyprland = {
       enable = true;
-      package = hyprlandCfg.package;
+      inherit (hyprlandCfg) package;
       xwayland.enable = true;
     };
 

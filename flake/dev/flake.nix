@@ -1,0 +1,18 @@
+{
+  description = "Private inputs for development purposes. These are used by the top level flake in the `dev` partition, but do not appear in consumers' lock files.";
+
+  inputs = {
+    # By pointing to the parent directory, this flake can "follow" the inputs
+    # of the root flake, ensuring dependency versions are kept in sync.
+    root.url = "path:./../..";
+
+    nixpkgs.follows = "root/nixpkgs";
+
+    treefmt-nix = {
+      url = "github:numtide/treefmt-nix";
+      inputs.nixpkgs.follows = "root/nixpkgs";
+    };
+  };
+
+  outputs = _: { };
+}

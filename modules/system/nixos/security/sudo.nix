@@ -1,11 +1,9 @@
 {
-  pkgs,
   lib,
   ...
 }:
 let
-  inherit (lib.modules) mkDefault mkForce;
-  inherit (lib.meta) getExe';
+  inherit (lib.modules) mkForce;
 in
 {
   security = {

@@ -4,7 +4,7 @@
   ...
 }:
 let
-  inherit (lib.options) mkOption mkEnableOption;
+  inherit (lib.options) mkOption;
   inherit (lib.types) enum;
 in
 {

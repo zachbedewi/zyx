@@ -11,7 +11,6 @@ let
     enum
     package
     str
-    nullOr
     ;
 
   cfg = config.modules.user;

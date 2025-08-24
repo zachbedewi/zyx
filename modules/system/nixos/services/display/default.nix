@@ -1,13 +1,12 @@
 {
   lib,
   config,
-  pkgs,
   ...
 }:
 let
   inherit (lib.options) mkOption mkEnableOption;
   inherit (lib.types) enum nullOr;
-  inherit (lib) mkIf mkMerge;
+  inherit (lib) mkIf;
 
   cfg = config.modules.services.display;
 in

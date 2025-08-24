@@ -5,9 +5,8 @@
   ...
 }:
 let
-  inherit (lib.options) mkOption mkEnableOption;
+  inherit (lib.options) mkOption;
   inherit (lib.types) bool;
-  inherit (lib) mkDefault;
 in
 {
   options.modules.device = {

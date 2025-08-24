@@ -20,7 +20,6 @@ let
 
   buildHomeModule =
     {
-      system,
       path,
       hostname,
       username,

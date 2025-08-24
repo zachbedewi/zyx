@@ -6,8 +6,8 @@ in
 {
   # Expose zyx library namespaces
   zyx = {
-    filesystem = zyxLib.flake.lib.filesystem;
-    builder = zyxLib.flake.lib.builder;
+    inherit (zyxLib.flake.lib) filesystem;
+    inherit (zyxLib.flake.lib) builder;
   };
 
   # Expose home-manager library namespaces
