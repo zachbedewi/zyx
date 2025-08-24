@@ -15,6 +15,7 @@
 
   partitionedAttrs = inputs.nixpkgs.lib.genAttrs [
     "checks"
+    "devShells"
     "formatter"
   ] (_: "dev");
 }
