@@ -1,5 +1,4 @@
-{ inputs }:
-{
+_: {
   mkExtendedLib = flake: nixpkgs: nixpkgs.lib.extend flake.lib.overlay;
 
   mkSpecialArgsForHome =

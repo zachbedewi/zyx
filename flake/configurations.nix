@@ -14,7 +14,7 @@ in
 {
   flake = {
     nixosConfigurations = mapAttrs (
-      name:
+      _:
       {
         system,
         hostname,

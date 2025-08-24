@@ -8,6 +8,11 @@
 
     nixpkgs.follows = "root/nixpkgs";
 
+    git-hooks-nix = {
+      url = "github:cachix/git-hooks.nix";
+      inputs.nixpkgs.follows = "root/nixpkgs";
+    };
+
     treefmt-nix = {
       url = "github:numtide/treefmt-nix";
       inputs.nixpkgs.follows = "root/nixpkgs";

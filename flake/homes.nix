@@ -18,7 +18,7 @@ in
 
   flake = {
     homeConfigurations = mapAttrs (
-      name:
+      _:
       {
         system,
         path,
