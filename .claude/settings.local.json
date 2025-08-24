@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git add:*)",
+      "Bash(git checkout:*)",
+      "Bash(nix flake check:*)",
+      "Bash(git commit:*)",
+      "Bash(nix eval:*)",
+      "Bash(mkdir:*)",
+      "Bash(ls:*)",
+      "Bash(grep:*)",
+      "Bash(nix flake show:*)",
+      "Bash(timeout:*)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:nix-community.github.io)",
+      "WebFetch(domain:www.tweag.io)",
+      "Bash(rg:*)"
+    ],
+    "deny": []
+  }
+}

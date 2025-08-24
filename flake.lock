@@ -257,7 +257,29 @@
         "minimal-emacs": "minimal-emacs",
         "nixpkgs": "nixpkgs",
         "nixpkgs-unstable": "nixpkgs-unstable",
-        "stylix": "stylix"
+        "sops-nix": "sops-nix",
+        "stylix": "stylix",
+        "zyx-secrets": "zyx-secrets"
+      }
+    },
+    "sops-nix": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1754988908,
+        "narHash": "sha256-t+voe2961vCgrzPFtZxha0/kmFSHFobzF00sT8p9h0U=",
+        "owner": "Mic92",
+        "repo": "sops-nix",
+        "rev": "3223c7a92724b5d804e9988c6b447a0d09017d48",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Mic92",
+        "repo": "sops-nix",
+        "type": "github"
       }
     },
     "stylix": {
@@ -388,6 +410,24 @@
         "owner": "tinted-theming",
         "repo": "base16-zed",
         "type": "github"
+      }
+    },
+    "zyx-secrets": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1756066721,
+        "narHash": "sha256-iuQ6uJUjcamywghHoTqpM3FDaoyQPvltcGVWcinKqeU=",
+        "ref": "main",
+        "rev": "41a870c973ff44e5435c2284a734fce54c8af9ca",
+        "shallow": true,
+        "type": "git",
+        "url": "ssh://git@github.com/zachbedewi/zyx-secrets.git"
+      },
+      "original": {
+        "ref": "main",
+        "shallow": true,
+        "type": "git",
+        "url": "ssh://git@github.com/zachbedewi/zyx-secrets.git"
       }
     }
   },

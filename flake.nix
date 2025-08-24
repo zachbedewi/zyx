@@ -23,6 +23,16 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    zyx-secrets = {
+      url = "git+ssh://git@github.com/zachbedewi/zyx-secrets.git?ref=main&shallow=1";
+      flake = false;
+    };
+
     stylix = {
       url = "github:danth/stylix";
       inputs.nixpkgs.follows = "nixpkgs";

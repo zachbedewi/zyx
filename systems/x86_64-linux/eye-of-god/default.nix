@@ -27,6 +27,9 @@
       roles = {
         common.enable = true;
       };
+      security = {
+        sops.enable = true;
+      };
     };
 
     modules = {
