@@ -15,8 +15,10 @@
 
   config = {
     zyx = {
-      roles = {
-        common.enable = true;
+      profiles = {
+        development.enable = true;
+        gaming.enable = true;
+        workstation.enable = true;
       };
       security = {
         sops.enable = true;

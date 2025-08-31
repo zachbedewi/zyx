@@ -64,6 +64,7 @@ inputs.nixpkgs.lib.nixosSystem {
     inputs.sops-nix.nixosModules.sops
 
     # Custom modules
+    ../../modules/profiles
     ../../modules/roles
     ../../modules/providers/nixos
 
