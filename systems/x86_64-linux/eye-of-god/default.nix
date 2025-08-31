@@ -10,7 +10,6 @@
 
     ../../../modules/options
     ../../../modules/system/nixos
-    ../../../modules/system/common
   ];
 
   config = {

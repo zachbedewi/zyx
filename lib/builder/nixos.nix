@@ -66,6 +66,7 @@ inputs.nixpkgs.lib.nixosSystem {
     # Custom modules
     ../../modules/profiles
     ../../modules/roles
+    ../../modules/providers/common
     ../../modules/providers/nixos
 
     # This host's configuration module
