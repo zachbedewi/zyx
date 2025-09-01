@@ -7,9 +7,6 @@
 {
   imports = [
     ./hardware-configuration.nix
-
-    ../../../modules/options
-    ../../../modules/system/nixos
   ];
 
   config = {
@@ -24,23 +21,16 @@
       };
     };
 
-    modules = {
-      device = {
-        type = "laptop";
-        hasAudio = true;
-      };
-
-      system = {
-        audio.enable = true;
-      };
-
-      services = {
-        display = {
+    services = {
+      xserver.enable = true;
+      displayManager = {
+        sddm.enable = true;
+        autoLogin = {
           enable = true;
-          backend = "x11";
-          desktopEnvironment = "plasma";
+          user = config.modules.user.primaryUser or "skitzo";
         };
       };
+      xserver.desktopManager.plasma5.enable = true;
     };
 
     boot.loader = {

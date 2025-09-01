@@ -1,7 +1,0 @@
-{
-  imports = [
-    ./device
-    ./system
-    ./user
-  ];
-}
