@@ -1,6 +1,5 @@
 {
   imports = [
-    ./security
     ./services
     ./users
   ];

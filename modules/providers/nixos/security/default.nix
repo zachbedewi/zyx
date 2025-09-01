@@ -1,5 +1,6 @@
 {
   imports = [
     ./sops
+    ./sudo
   ];
 }
