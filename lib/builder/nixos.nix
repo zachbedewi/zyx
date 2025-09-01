@@ -26,20 +26,24 @@ let
       ...
     }:
     {
-      home-manager.users.${username} = {
-        imports = [
-          { _module.args.lib = extendedLib; }
+      home-manager = {
+        backupFileExtension = "hm.old";
 
-          path
-        ];
-      };
-      home-manager.extraSpecialArgs = mkSpecialArgsForHome {
-        inherit
-          inputs
-          hostname
-          username
-          extendedLib
-          ;
+        users.${username} = {
+          imports = [
+            { _module.args.lib = extendedLib; }
+
+            path
+          ];
+          _module.args = mkSpecialArgsForHome {
+            inherit
+              inputs
+              hostname
+              username
+              extendedLib
+              ;
+          };
+        };
       };
     };
 in
