@@ -94,12 +94,9 @@ in
         extra-experimental-features = [
           "flakes"
           "nix-command"
-          "recursive-nix"
           "auto-allocate-uids"
           "cgroups"
-          "repl-flake"
           "no-url-literals"
-          "dynamic-derivations"
         ];
 
         pure-eval = false;

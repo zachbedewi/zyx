@@ -30,7 +30,7 @@
           user = config.modules.user.primaryUser or "skitzo";
         };
       };
-      xserver.desktopManager.plasma5.enable = true;
+      desktopManager.plasma6.enable = true;
     };
 
     boot.loader = {
@@ -66,7 +66,6 @@
       claude-code
       nil
       gcc
-      libsForQt5.kdenlive
       ripgrep
       coreutils
       fd
