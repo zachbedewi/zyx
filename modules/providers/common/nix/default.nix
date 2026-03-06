@@ -94,9 +94,9 @@ in
         extra-experimental-features = [
           "flakes"
           "nix-command"
+          "pipe-operator"
           "auto-allocate-uids"
           "cgroups"
-          "no-url-literals"
         ];
 
         pure-eval = false;

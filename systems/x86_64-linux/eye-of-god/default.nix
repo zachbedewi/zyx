@@ -21,17 +21,7 @@
       };
     };
 
-    services = {
-      xserver.enable = true;
-      displayManager = {
-        sddm.enable = true;
-        autoLogin = {
-          enable = true;
-          user = config.modules.user.primaryUser or "skitzo";
-        };
-      };
-      desktopManager.plasma6.enable = true;
-    };
+    # Display/desktop configuration is now user-specific via homes/*/desktop.nix
 
     boot.loader = {
       systemd-boot = {
@@ -58,20 +48,19 @@
     nixpkgs.config.allowUnfree = true;
 
     environment.systemPackages = with pkgs; [
+      prusa-slicer
+      orca-slicer
       firefox
-      alejandra
       neovim
-      statix
-      deadnix
       claude-code
-      nil
       gcc
       ripgrep
       coreutils
       fd
       clang
       tree
-      nixfmt-rfc-style
+      vscodium
+      mcp-nixos
     ];
 
     stylix = {

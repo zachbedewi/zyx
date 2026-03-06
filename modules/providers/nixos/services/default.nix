@@ -1,5 +1,6 @@
 {
   imports = [
+    ./display
     ./openssh
     ./pipewire
   ];

@@ -4,115 +4,81 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-Zyx is a NixOS configuration monorepo that provides centralized configuration management for multiple computing environments. The project uses Nix flakes with flake-parts for modular system configuration.
+Zyx is a NixOS configuration monorepo using Nix flakes with flake-parts. It manages system and home configurations for multiple users/hosts from a single repository.
 
-## Key Development Commands
+## Commands
 
-### Building and Testing
 ```bash
-# Build the current system configuration
-sudo nixos-rebuild switch --flake .
-
-# Test configuration without activating
-sudo nixos-rebuild test --flake .
-
-# Build specific host (eye-of-god is the current host)
+# Build and activate system configuration
 sudo nixos-rebuild switch --flake .#eye-of-god
 
-# Check flake syntax and evaluate all configurations
+# Test configuration without activating (safe dry run)
+sudo nixos-rebuild test --flake .#eye-of-god
+
+# Evaluate flake without building (syntax/type checking)
 nix flake check
+
+# Format all Nix files (uses treefmt: nixfmt + deadnix + statix + yamlfmt)
+nix fmt
 
 # Update flake inputs
 nix flake update
 
-# Show flake info and outputs
-nix flake show
-
-# Build configuration in VM for testing
-nixos-rebuild build-vm --flake .
+# Build configuration in a VM for testing
+nixos-rebuild build-vm --flake .#eye-of-god
 ```
 
-### Development Workflow
-```bash
-# Format Nix code (if formatter is configured)
-nix fmt
+## Architecture
 
-# Enter development shell with required tools
-nix develop
+### Three-Layer Module System
 
-# Evaluate configuration options
-nix eval .#nixosConfigurations.eye-of-god.config.system.build.toplevel
-```
+The configuration is organized into three conceptual layers (defined in README.org):
 
-## Architecture Overview
+1. **Profiles** (`modules/profiles/`) — *"What can the host do?"* — Hardware/platform capabilities (workstation, server, gaming, development). Enabled per-host via `zyx.profiles.<name>.enable`.
 
-### Core Structure
-- **flake.nix**: Entry point using flake-parts for modular flake definition
-- **hosts/**: Host-specific configurations with imports for nixos and darwin
-- **modules/**: Modular system components organized by category
-- **docs/**: Comprehensive implementation roadmap and documentation
+2. **Roles** (`modules/roles/`) — *"What should the host be capable of?"* — Use-case bundles that compose providers. Profiles activate roles.
 
-### Module Organization
-The project follows a hierarchical module structure:
+3. **Providers** (`modules/providers/`) — *"How will features be implemented?"* — Concrete service/program configurations. Split into `common/`, `nixos/`, and (future) `darwin/`.
 
-**modules/options/**: Configuration option definitions
-- `device/`: Hardware capabilities (audio, GPU, Wayland support)
-- `system/`: System-wide options  
-- `user/`: User-specific options
+### Build Pipeline
 
-**modules/system/**: Platform-specific system modules
-- `nixos/`: NixOS-specific configurations
-  - `device/`: Hardware-specific modules (audio servers, display)
-  - `environment/`: System environment settings
-  - `programs/`: System-level programs (bash, git, zsh)
-  - `services/`: System services including display managers
-  - `users/`: User account management
-- `common/`: Cross-platform modules
-- `darwin/`: macOS-specific modules (prepared for future use)
+`flake.nix` → `flake/` (flake-parts modules) → `lib/builder/` → NixOS/Home Manager configurations
 
-**modules/home/**: Home Manager configurations
-- `desktop/wayland/hyprland/`: Wayland compositor configuration
-- `packages/`: User package management
-- `xdg/`: XDG directory specifications
+Key flow:
+- `lib/filesystem/` auto-discovers hosts from `systems/<arch>/<hostname>/` and homes from `homes/<arch>/<user>@<hostname>/`
+- `lib/builder/nixos.nix` assembles a NixOS system: loads the host config, all provider/profile/role modules, and builds Home Manager configs for users matched to that hostname
+- `lib/builder/common.nix` constructs `specialArgs` passed to all modules (`inputs`, `hostname`, `usernames`, `userDesktops`, etc.)
 
-### Current Host Configuration
-- **eye-of-god**: Framework 13" laptop running NixOS
-- **Platform**: x86_64-linux with KDE Plasma desktop
-- **Features**: Audio (PipeWire), Wayland support, GPU acceleration
+### Host and Home Configuration
 
-### Key Design Principles
-1. **Self-contained modules**: Minimize cross-dependencies between modules
-2. **Single-level imports**: Avoid deep directory traversal ("../.." patterns)
-3. **Capability-driven**: Hardware capabilities determine available features
-4. **Platform abstraction**: Prepared for cross-platform support (Darwin, NixOS)
+**Systems** live in `systems/<arch>/<hostname>/default.nix`. The current host is `eye-of-god` (Framework 13" laptop).
 
-### Current Implementation Status
-- ✅ Basic NixOS configuration with KDE Plasma
-- ✅ Device capability detection system
-- ✅ Audio abstraction with PipeWire support
-- ✅ Display service abstraction framework
-- 🔄 Hyprland Wayland compositor integration (in progress)
-- ⏳ Cross-platform support preparation
-- ⏳ Feature flag system implementation
+**Homes** live in `homes/<arch>/<user>@<hostname>/default.nix`. The `@` delimiter maps users to hosts automatically. Each home can have a `desktop.nix` that specifies session type (e.g., `{ session = "kde"; protocol = "wayland"; }`), which gets passed as `desktopConfig` to home modules.
 
-## Important Files
-- `hosts/nixos/eye-of-god/default.nix`: Current host configuration
-- `modules/options/device/capabilities.nix`: Hardware capability detection
-- `modules/system/nixos/services/display/`: Desktop environment abstraction
-- `docs/implementation-roadmap.md`: Detailed development roadmap and current work status
+Home modules live in `modules/home/` (desktop, packages, xdg). Home configurations import these directly.
 
-## Development Notes
+### Special Args Available in Modules
 
-### Module Development
-- Follow existing import patterns in module organization
-- Use capability detection before enabling hardware-dependent features
-- Test configuration changes with `nixos-rebuild test` before switching
-- Maintain compatibility with existing eye-of-god configuration during refactoring
+- **System modules**: `inputs`, `self`, `hostname`, `usernames`, `userDesktops`, `lib` (extended)
+- **Home modules**: `inputs`, `self`, `hostname`, `username`, `desktopConfig`, `lib` (extended)
 
-### Configuration Testing
-- Always test on the eye-of-god configuration before committing changes
-- Use VM builds for testing potentially breaking changes
-- Verify flake evaluation with `nix flake check`
+### Dev Tooling
 
-### Git Workflow
-The repository uses conventional commit messages following the existing patterns seen in recent commits. Current branch is `main` which is also the primary development branch.
+Formatting and linting are configured via flake-parts partitions in `flake/dev/`:
+- `treefmt` (nixfmt, deadnix, statix, yamlfmt)
+- Pre-commit hooks (deadnix, statix, treefmt) if git-hooks-nix is available
+
+### External Inputs
+
+- **home-manager**: User environment management, integrated as NixOS module
+- **stylix**: System-wide theming (catppuccin-mocha)
+- **sops-nix**: Secrets management
+- **zyx-secrets**: Private secrets repo (SSH-authenticated)
+- **minimal-emacs**: Emacs configuration (non-flake)
+
+## Conventions
+
+- All Nix files use `nixfmt-rfc-style` formatting
+- Module options are namespaced under `zyx.*` (e.g., `zyx.profiles.workstation.enable`)
+- Each module directory uses `default.nix` as its entry point
+- The `lib/` directory extends nixpkgs lib via an overlay pattern (`lib.overlay`)

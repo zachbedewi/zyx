@@ -59,11 +59,14 @@ let
       userHost:
       let
         parsed = parseDelimittedHomeConfigIdentifier userHost "@";
+        homePath = homesForSystemArchitecturePath + "/${userHost}";
+        desktopPath = homePath + "/desktop.nix";
       in
       {
         inherit system;
         inherit (parsed) hostname username;
-        path = homesForSystemArchitecturePath + "/${userHost}";
+        path = homePath;
+        desktop = if builtins.pathExists desktopPath then import desktopPath else null;
       }
     );
 in

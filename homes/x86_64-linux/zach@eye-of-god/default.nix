@@ -1,3 +1,4 @@
+# Headless user — no desktop.nix (intentional, no GUI session)
 {
   lib,
   username,
@@ -5,9 +6,9 @@
 }:
 {
   imports = [
+    ../../../modules/home/desktop
     ../../../modules/home/xdg
     ../../../modules/home/packages
-    ../../../home/starship.nix
   ];
 
   # Enable Home Manager to manage itself

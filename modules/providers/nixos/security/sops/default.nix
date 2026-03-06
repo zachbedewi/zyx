@@ -28,6 +28,7 @@ in
 
       secrets = {
         "zach-password" = { };
+        "skitzo-password" = { };
       };
     };
   };

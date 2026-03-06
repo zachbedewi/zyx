@@ -5,7 +5,7 @@
 }:
 let
   browser = [ "firefox.desktop" ];
-  editor = [ "nvim.desktop" ];
+  editor = [ "neovim.desktop" ];
 
   # For an extensive list of associations, see:
   # https://github.com/iggut/GamiNiX/blob/8070528de419703e13b4d234ef39f05966a7fafb/system/desktop/home-main.nix
@@ -36,6 +36,21 @@ in
     configHome = "${config.home.homeDirectory}/.config";
     dataHome = "${config.home.homeDirectory}/.local/share";
     stateHome = "${config.home.homeDirectory}/.local/state";
+
+    desktopEntries.neovim = {
+      name = "Neovim";
+      genericName = "Text Editor";
+      exec = "${pkgs.neovim}/bin/nvim %F";
+      terminal = true;
+      categories = [
+        "Utility"
+        "TextEditor"
+      ];
+      mimeType = [
+        "text/plain"
+        "application/json"
+      ];
+    };
 
     # Enables management of common user directories
     userDirs = {

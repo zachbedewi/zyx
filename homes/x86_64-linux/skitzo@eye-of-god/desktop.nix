@@ -1,0 +1,4 @@
+{
+  session = "kde";
+  protocol = "wayland";
+}

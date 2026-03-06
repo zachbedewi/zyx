@@ -7,9 +7,15 @@ _: {
       hostname,
       username,
       extendedLib,
+      desktopConfig ? null,
     }:
     {
-      inherit inputs hostname username;
+      inherit
+        inputs
+        hostname
+        username
+        desktopConfig
+        ;
       inherit (inputs) self;
       lib = extendedLib;
       flake-parts-lib = inputs.flake-parts.lib;
@@ -21,9 +27,15 @@ _: {
       hostname,
       usernames,
       extendedLib,
+      userDesktops ? { },
     }:
     {
-      inherit inputs hostname usernames;
+      inherit
+        inputs
+        hostname
+        usernames
+        userDesktops
+        ;
       inherit (inputs) self;
       lib = extendedLib;
       flake-parts-lib = inputs.flake-parts.lib;

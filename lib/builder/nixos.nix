@@ -18,11 +18,20 @@ let
   );
   usernames = builtins.map ({ username, ... }: username) homeConfigMetadataForHost;
 
+  # Aggregate desktop configurations from all users on this host
+  userDesktops = builtins.listToAttrs (
+    builtins.map (cfg: {
+      name = cfg.username;
+      value = cfg.desktop;
+    }) homeConfigMetadataForHost
+  );
+
   buildHomeModule =
     {
       path,
       hostname,
       username,
+      desktop,
       ...
     }:
     {
@@ -42,6 +51,7 @@ let
               username
               extendedLib
               ;
+            desktopConfig = desktop;
           };
         };
       };
@@ -56,6 +66,7 @@ inputs.nixpkgs.lib.nixosSystem {
       hostname
       usernames
       extendedLib
+      userDesktops
       ;
   };
 

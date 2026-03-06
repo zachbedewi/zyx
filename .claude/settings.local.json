@@ -14,8 +14,14 @@
       "WebFetch(domain:github.com)",
       "WebFetch(domain:nix-community.github.io)",
       "WebFetch(domain:www.tweag.io)",
-      "Bash(rg:*)"
+      "Bash(rg:*)",
+      "Bash(tree:*)",
+      "Bash(nix fmt:*)"
     ],
     "deny": []
-  }
+  },
+  "enabledMcpjsonServers": [
+    "mcp-nixos"
+  ],
+  "enableAllProjectMcpServers": true
 }
